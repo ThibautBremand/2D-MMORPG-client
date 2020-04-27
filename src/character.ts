@@ -1,5 +1,6 @@
 import { Gamemap } from "./gamemap.js"
-import { Communication } from "./communication.js"
+import { Config } from "./config/config.js"
+import { RPG } from "./rpg.js"
 
 let ANIMATION_LENGTH = 1
 let MOVEMENT_LENGTH = 10
@@ -39,9 +40,9 @@ export class Character {
             this.etatAnimation = -1;
 
             // Initializes the map translation when the main entity is drawn
-            if(this === Communication.joueur) {
-                Communication.map.camX = Communication.map.clamp(-(-(Communication.joueur.x * Communication.tileSize) + Communication.cWIdth/2), 0, Communication.map.width * Communication.tileSize - Communication.cWIdth);
-                Communication.map.camY = Communication.map.clamp(-(-(Communication.joueur.y * Communication.tileSize) + Communication.cHeight/2), 0, Communication.map.height * Communication.tileSize - Communication.cHeight);
+            if(this === RPG.joueur) {
+                RPG.map.camX = RPG.map.clamp(-(-(RPG.joueur.x * Config.tileSize) + Config.cWIdth/2), 0, RPG.map.width * Config.tileSize - Config.cWIdth);
+                RPG.map.camY = RPG.map.clamp(-(-(RPG.joueur.y * Config.tileSize) + Config.cHeight/2), 0, RPG.map.height * Config.tileSize - Config.cHeight);
             }
         } else if(this.etatAnimation >= 0) {
             // Determines the image (frame) to display for the animation
@@ -54,25 +55,25 @@ export class Character {
             let pixelsAParcourir = 32 - (32 * (this.etatAnimation / MOVEMENT_LENGTH));
 
             // From this number, decides the offset for x & y
-            if(this.direction == Communication.DIRECTION.UP) {
+            if(this.direction == RPG.DIRECTION.UP) {
                 decalageY = pixelsAParcourir;
-            } else if(this.direction == Communication.DIRECTION.DOWN) {
+            } else if(this.direction == RPG.DIRECTION.DOWN) {
                 decalageY = -pixelsAParcourir;
-            } else if(this.direction == Communication.DIRECTION.LEFT) {
+            } else if(this.direction == RPG.DIRECTION.LEFT) {
                 decalageX = pixelsAParcourir;
-            } else if(this.direction == Communication.DIRECTION.RIGHT) {
+            } else if(this.direction == RPG.DIRECTION.RIGHT) {
                 decalageX = -pixelsAParcourir;
             }
 
             // One more frame
             this.etatAnimation++;
 
-            let tempocamX = Communication.map.clamp(-(-(Communication.joueur.x * Communication.tileSize) + Communication.cWIdth/2), 0, Communication.map.width * Communication.tileSize - Communication.cWIdth);
-            let tempocamY = Communication.map.clamp(-(-(Communication.joueur.y * Communication.tileSize) + Communication.cHeight/2), 0, Communication.map.height * Communication.tileSize - Communication.cHeight);
+            let tempocamX = RPG.map.clamp(-(-(RPG.joueur.x * Config.tileSize) + Config.cWIdth/2), 0, RPG.map.width * Config.tileSize - Config.cWIdth);
+            let tempocamY = RPG.map.clamp(-(-(RPG.joueur.y * Config.tileSize) + Config.cHeight/2), 0, RPG.map.height * Config.tileSize - Config.cHeight);
 
-            if (tempocamX != Communication.map.camX || tempocamY != Communication.map.camY) {
-                Communication.map.camX = tempocamX + Math.round(decalageX);
-                Communication.map.camY = tempocamY + Math.round(decalageY);
+            if (tempocamX != RPG.map.camX || tempocamY != RPG.map.camY) {
+                RPG.map.camX = tempocamX + Math.round(decalageX);
+                RPG.map.camY = tempocamY + Math.round(decalageY);
             }
         }
 
@@ -103,22 +104,22 @@ export class Character {
 
     public getCoordonneesAdjacentes(direction: any):  {'x' : number, 'y' : number} {
         let coord = {'x' : this.x, 'y' : this.y}
-        if ( direction == Communication.DIRECTION.DOWN ) {
+        if ( direction == RPG.DIRECTION.DOWN ) {
             coord.y++
         }
-        else if ( direction == Communication.DIRECTION.LEFT ) {
+        else if ( direction == RPG.DIRECTION.LEFT ) {
             coord.x--
         }
-        else if ( direction == Communication.DIRECTION.RIGHT ) {
+        else if ( direction == RPG.DIRECTION.RIGHT ) {
             coord.x++
         }
-        else if ( direction == Communication.DIRECTION.UP ) {
+        else if ( direction == RPG.DIRECTION.UP ) {
             coord.y--
         }
         return coord
     }
 
-    public move(direction: any, map: Gamemap, mainChar: boolean) {
+    public move(direction: any, map: Gamemap, mainChar: boolean): boolean {
         // If a movement is already proceeding, we refuse the movement
         if (mainChar && this.etatAnimation >= 0) {
             return false

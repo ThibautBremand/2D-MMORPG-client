@@ -1,4 +1,4 @@
-import { Communication } from "./communication.js"
+import { Config } from "./config/config.js"
 
 export class Tileset {
     image: any
@@ -15,7 +15,7 @@ export class Tileset {
             }
     
             // Largeur du tileset en tiles
-            this.tilesetReference.largeur = this.width / Communication.tileSize;
+            this.tilesetReference.largeur = this.width / Config.tileSize;
         }
         this.image.src = "front/tilesets/" + url;
     }
@@ -26,9 +26,9 @@ export class Tileset {
         if(xSourceEnTiles == 0) xSourceEnTiles = this.image.tilesetReference.largeur;
         var ySourceEnTiles = Math.ceil(nb / this.image.tilesetReference.largeur);
 
-        var xSource = (xSourceEnTiles - 1) * Communication.tileSize;
-        var ySource = (ySourceEnTiles - 1) * Communication.tileSize;
+        var xSource = (xSourceEnTiles - 1) * Config.tileSize;
+        var ySource = (ySourceEnTiles - 1) * Config.tileSize;
 
-        context.drawImage(this.image, xSource, ySource, Communication.tileSize, Communication.tileSize, xDestination, yDestination, Communication.tileSize, Communication.tileSize);
+        context.drawImage(this.image, xSource, ySource, Config.tileSize, Config.tileSize, xDestination, yDestination, Config.tileSize, Config.tileSize);
     }
 }

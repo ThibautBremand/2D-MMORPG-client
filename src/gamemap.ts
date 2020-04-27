@@ -1,6 +1,7 @@
+import { Config } from "./config/config.js"
 import { Character } from "./character.js"
-import { Communication } from "./communication.js"
 import { Tileset } from "./tileset.js"
+import { RPG } from "./rpg.js"
 
 export class Gamemap {
     mapToDraw: any
@@ -57,7 +58,7 @@ export class Gamemap {
     // Draw the object Map
     public drawMap(context: CanvasRenderingContext2D, contextDebug: CanvasRenderingContext2D): void {
         context.setTransform(1, 0, 0, 1, 0, 0)// reset the transform matrix as it is cumulative
-        context.clearRect(0, 0, Communication.cWIdth, Communication.cHeight)// clear the viewport AFTER the matrix is reset
+        context.clearRect(0, 0, Config.cWIdth, Config.cHeight)// clear the viewport AFTER the matrix is reset
 
         // Clamp the camera position to the world bounds while centering the camera around the player
         this.translate(-this.camX, -this.camY, context)
@@ -76,7 +77,7 @@ export class Gamemap {
             }
         }
 
-        // Draws the characters
+        // Draw the characters
         for (let i = 0, l = this.characters.length; i < l; i++) {
             this.characters[i].drawCharacter(context)
         }
@@ -98,9 +99,9 @@ export class Gamemap {
 
     public addPersonnage(char: Character): void {
         this.characters.push(char)
-        if (char === Communication.joueur) {
-            this.camX = this.clamp(-(-(Communication.joueur.x * Communication.tileSize) + Communication.cWIdth / 2), 0, this.width * Communication.tileSize - Communication.cWIdth)
-            this.camY = this.clamp(-(-(Communication.joueur.y * Communication.tileSize) + Communication.cHeight / 2), 0, this.height * Communication.tileSize - Communication.cHeight)
+        if (char === RPG.joueur) {
+            this.camX = this.clamp(-(-(RPG.joueur.x * Config.tileSize) + Config.cWIdth / 2), 0, this.width * Config.tileSize - Config.cWIdth)
+            this.camY = this.clamp(-(-(RPG.joueur.y * Config.tileSize) + Config.cHeight / 2), 0, this.height * Config.tileSize - Config.cHeight)
         }
     }
 
@@ -110,16 +111,16 @@ export class Gamemap {
         for (let l = 0; l < this.tilesets.length; ++l) {
             if (this.tilesets[l].firstgid > currentTile && currentTile > 1) {
                 tilesetToUse = this.tilesets[l - 1]
-                tilesetToUse.drawTitle(currentTile - tilesetToUse.firstgid + l, context, i * Communication.tileSize, j * Communication.tileSize)
+                tilesetToUse.drawTitle(currentTile - tilesetToUse.firstgid + l, context, i * Config.tileSize, j * Config.tileSize)
                 return
             }
         }
-        if (Communication.tileSize == 16) {
+        if (Config.tileSize == 16) {
             tilesetToUse = this.tilesets[this.tilesets.length - 1]
-            tilesetToUse.drawTitle(currentTile - tilesetToUse.firstgid + this.tilesets.length, context, i * Communication.tileSize, j * Communication.tileSize)
-        } else if (Communication.tileSize == 32) {
+            tilesetToUse.drawTitle(currentTile - tilesetToUse.firstgid + this.tilesets.length, context, i * Config.tileSize, j * Config.tileSize)
+        } else if (Config.tileSize == 32) {
             tilesetToUse = this.tilesets[this.tilesets.length - 1]
-            tilesetToUse.drawTitle(currentTile - tilesetToUse.firstgid + this.tilesets.length - 1, context, i * Communication.tileSize, j * Communication.tileSize)
+            tilesetToUse.drawTitle(currentTile - tilesetToUse.firstgid + this.tilesets.length - 1, context, i * Config.tileSize, j * Config.tileSize)
         }
     }
 
@@ -132,8 +133,8 @@ export class Gamemap {
                 let collX = this.collisions[i].x
                 let collY = this.collisions[i].y
 
-                let checkX = (positionToCheck.x * Communication.tileSize) + Communication.tileSize
-                let checkY = (positionToCheck.y * Communication.tileSize) + Communication.tileSize
+                let checkX = (positionToCheck.x * Config.tileSize) + Config.tileSize
+                let checkY = (positionToCheck.y * Config.tileSize) + Config.tileSize
 
                 // Compares the positionToCheck with the collision area
                 if (checkX > collX && checkX < collX + collWidth && checkY > collY && checkY < collY + collHeight) {
@@ -154,23 +155,23 @@ export class Gamemap {
                     let collX = this.neighbors[j].objects[i].x
                     let collY = this.neighbors[j].objects[i].y
 
-                    let checkX = (nextPos.x * Communication.tileSize) + Communication.tileSize
-                    let checkY = (nextPos.y * Communication.tileSize) + Communication.tileSize
+                    let checkX = (nextPos.x * Config.tileSize) + Config.tileSize
+                    let checkY = (nextPos.y * Config.tileSize) + Config.tileSize
 
                     // Compares the joueur's with the TP area
-                    if (direction == Communication.DIRECTION.UP) {
+                    if (direction == RPG.DIRECTION.UP) {
                         if (checkX > collX && checkX < collX + collWidth && checkY >= collY && checkY < collY + collHeight) {
                             return (this.neighbors[j].name.substr(3, this.neighbors[j].name.length))
                         }
-                    } else if (direction == Communication.DIRECTION.DOWN) {
+                    } else if (direction == RPG.DIRECTION.DOWN) {
                         if (checkX > collX && checkX < collX + collWidth && checkY - collHeight == collY + collHeight) {
                             return (this.neighbors[j].name.substr(3, this.neighbors[j].name.length))
                         }
-                    } else if (direction == Communication.DIRECTION.LEFT) {
+                    } else if (direction == RPG.DIRECTION.LEFT) {
                         if (checkX == collX && checkX < collX + collWidth && checkY >= collY && checkY < collY + collHeight) {
                             return (this.neighbors[j].name.substr(3, this.neighbors[j].name.length))
                         }
-                    } else if (direction == Communication.DIRECTION.RIGHT) {
+                    } else if (direction == RPG.DIRECTION.RIGHT) {
                         if (checkX - collWidth == collX + collWidth && checkY >= collY && checkY < collY + collHeight) {
                             return (this.neighbors[j].name.substr(3, this.neighbors[j].name.length))
                         }
