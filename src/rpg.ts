@@ -13,10 +13,10 @@ export module RPG {
     const messageUser: string = "User"
     const messageDir: string = "Dir"
 
-    // const characters: Character[] = []
+    let characters: Map<string, Character> = new Map()
 
     // 
-    // Handle messages from the server
+    // Management of the messages coming from the server
     // 
     export function handleOpen(): void {
         $('#logs').append('Connection established!</br>')
@@ -31,7 +31,7 @@ export module RPG {
     }
 
     // Load all the dynamic elements of the current map of the player
-    // For example, the other connected characters
+    // (for example, the other connected characters)
     export function handleMessageMap(value: any): void {
         let connectedCharactersData = parseJson(value)
         for (let characterData of connectedCharactersData) {
@@ -54,7 +54,7 @@ export module RPG {
     // When another character moves
     export function handleMessageMove(value: any): void {
         value = parseJson(value)
-        for (let character of map.characters) {
+        for (let [_, character] of characters) {
             if (character.name == value[messageUser] && value[messageUser] !== joueur.name) {
                 character.move(value[messageDir], map, false)
             }
@@ -63,52 +63,18 @@ export module RPG {
 
     // When another user leaves the entity
     export function handleMessageDisconnect(value: any): void {
-        for (let i = 0; i < map.characters.length; ++i) {
-            if (map.characters[i].name == value) {
-                map.characters.splice(i, 1)
-            }
-        }
+        characters.delete(value)
     }
 
     export function handleMessageTP(value: any): void {
-        value = JSON.parse(value)
-        let currentChar = value
+        let currentChar = JSON.parse(value)
 
-        for (let i = 0; i < map.characters.length; ++i) {
-            if (map.characters[i].name == currentChar.name && currentChar.name !== joueur.name && currentChar.GamemapID != joueur.gamemapID) {
-                map.characters.splice(i, 1)
-            } else if (map.characters[i].name == currentChar.name && currentChar.name == joueur.name) {
-                initPlayer(currentChar)
-                initGamemap(currentChar)
-            }
+        if (currentChar.name !== joueur.name) {
+            characters.delete(currentChar.name)
+            return
         }
-    }
-
-    function initPlayer(playerData: any): void {
-        joueur = new Character(parseInt(playerData.x), parseInt(playerData.y), Config.DIRECTION.DOWN, playerData.name, playerData.GamemapID)
-    }
-
-    function initGamemap(playerData: any): void {
-        map = new Gamemap(0, 0, 0, 0, playerData.Gamemap.raw)
-        map.loadLayers()
-        CharacterDrawer.generate(joueur, playerData.tileFormula)
-        addPersonnage(joueur, joueur)
-    }
-
-    // Add character to the game
-    // Create a Character from the character data and draw it
-    function addCharacter(character: any): void {
-        let newChar = new Character(parseInt(character.x), parseInt(character.y), Config.DIRECTION.DOWN, character.name, character.GamemapID)
-        CharacterDrawer.generate(newChar, character.tileFormula)
-        addPersonnage(newChar, joueur)
-    }
-
-    function addPersonnage(char: Character, joueur: Character): void {
-        map.characters.push(char)
-        if (char === joueur) {
-            map.camX = map.clamp(-(-(joueur.x * Config.tileSize) + Config.cWIdth / 2), 0, map.width * Config.tileSize - Config.cWIdth)
-            map.camY = map.clamp(-(-(joueur.y * Config.tileSize) + Config.cHeight / 2), 0, map.height * Config.tileSize - Config.cHeight)
-        }
+        initPlayer(currentChar)
+        initGamemap(currentChar)
     }
 
     function parseJson(message: string): any {
@@ -153,13 +119,6 @@ export module RPG {
         }, 40)
     }
 
-    function drawCharacter(context: CanvasRenderingContext2D, joueur: Character, map: Gamemap) {
-        // Draw the characters
-        for (let i = 0, l = map.characters.length; i < l; i++) {
-            map.characters[i].drawCharacter(context, joueur, map)
-        }
-    }
-
     function initKeyboard(): void {
         window.onkeydown = (event: any) => {
             // Retrieve the key code
@@ -192,8 +151,6 @@ export module RPG {
         }
     }
 
-    // Communicate with the server about a player movement
-    // Should be in communication.js
     function movePlayer (direction: number): void {
         // Try to move the character
         // If false is returned, the move couldn't be processed
@@ -209,5 +166,42 @@ export module RPG {
             }
         }
         Communication.sendMoveMessage(direction)
+    }
+
+    function drawCharacter(context: CanvasRenderingContext2D, joueur: Character, map: Gamemap) {
+        // Draw the characters
+        for (let [_, character] of characters) {
+            character.drawCharacter(context, joueur, map)
+        }
+    }
+
+    // 
+    // Game global state management
+    // 
+    function initPlayer(playerData: any): void {
+        joueur = new Character(parseInt(playerData.x), parseInt(playerData.y), Config.DIRECTION.DOWN, playerData.name, playerData.GamemapID)
+    }
+
+    function initGamemap(playerData: any): void {
+        characters = new Map()
+
+        map = new Gamemap(0, 0, 0, 0, playerData.Gamemap.raw)
+        map.loadLayers()
+
+        CharacterDrawer.generate(joueur, playerData.tileFormula)
+
+        characters.set(joueur.name, joueur)
+
+        map.camX = map.clamp(-(-(joueur.x * Config.tileSize) + Config.cWIdth / 2), 0, map.width * Config.tileSize - Config.cWIdth)
+        map.camY = map.clamp(-(-(joueur.y * Config.tileSize) + Config.cHeight / 2), 0, map.height * Config.tileSize - Config.cHeight)
+    }
+
+    // Add character to the game: create a Character from the character data and draw it
+    function addCharacter(character: any): void {
+        let newChar = new Character(parseInt(character.x), parseInt(character.y), Config.DIRECTION.DOWN, character.name, character.GamemapID)
+
+        CharacterDrawer.generate(newChar, character.tileFormula)
+        
+        characters.set(newChar.name, newChar)
     }
 }

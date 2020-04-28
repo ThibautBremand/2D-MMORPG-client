@@ -1,5 +1,4 @@
 import { Config } from "./config/config.js"
-import { Character } from "./character.js"
 import { Tileset } from "./tileset.js"
 
 export class Gamemap {
@@ -7,7 +6,6 @@ export class Gamemap {
     height: number
     width: number
     layers: any[]
-    characters: Character[]
     tilesets: Tileset[]
     collisions: any[]
     neighbors: any[]
@@ -21,7 +19,6 @@ export class Gamemap {
         this.camX = camX
         this.camY = camY
         this.layers = new Array()
-        this.characters = new Array()
         this.tilesets = new Array()
         this.collisions = new Array()
         this.neighbors = new Array()
