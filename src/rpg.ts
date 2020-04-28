@@ -1,7 +1,6 @@
 import { Config } from "./config/config.js"
 import { Character } from "./character.js"
 import { Gamemap } from "./gamemap.js"
-import { CharacterDrawer } from "./characterDrawer.js"
 import { Communication } from "./communication/communication.js"
 
 export module RPG {
@@ -188,7 +187,7 @@ export module RPG {
         map = new Gamemap(0, 0, 0, 0, playerData.Gamemap.raw)
         map.loadLayers()
 
-        CharacterDrawer.generate(joueur, playerData.tileFormula)
+        joueur.generate(playerData.tileFormula)
 
         characters.set(joueur.name, joueur)
 
@@ -200,7 +199,7 @@ export module RPG {
     function addCharacter(character: any): void {
         let newChar = new Character(parseInt(character.x), parseInt(character.y), Config.DIRECTION.DOWN, character.name, character.GamemapID)
 
-        CharacterDrawer.generate(newChar, character.tileFormula)
+        newChar.generate(character.tileFormula)
         
         characters.set(newChar.name, newChar)
     }

@@ -1,5 +1,6 @@
 import { Gamemap } from "./gamemap.js"
 import { Config } from "./config/config.js"
+import { CharacterDrawer } from "./characterDrawer.js"
 
 let ANIMATION_LENGTH = 1
 let MOVEMENT_LENGTH = 10
@@ -99,6 +100,10 @@ export class Character {
             );
         }
         context.fillText(this.name,(this.x * 32) - (this.image.characterReference.largeur / 2) + 16 + decalageX, (this.y * 32) - this.image.characterReference.hauteur + 24 + decalageY + 5);
+    }
+
+    public generate(json: any): void {
+        CharacterDrawer.generate(this, json)
     }
 
     public move(direction: any, map: Gamemap, mainChar: boolean): boolean {
