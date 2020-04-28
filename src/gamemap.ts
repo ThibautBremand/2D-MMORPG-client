@@ -1,7 +1,6 @@
 import { Config } from "./config/config.js"
 import { Character } from "./character.js"
 import { Tileset } from "./tileset.js"
-import { RPG } from "./rpg.js"
 
 export class Gamemap {
     mapToDraw: any
@@ -56,7 +55,7 @@ export class Gamemap {
     }
 
     // Draw the object Map
-    public drawMap(context: CanvasRenderingContext2D, contextDebug: CanvasRenderingContext2D): void {
+    public drawMap(context: CanvasRenderingContext2D): void {
         context.setTransform(1, 0, 0, 1, 0, 0)// reset the transform matrix as it is cumulative
         context.clearRect(0, 0, Config.cWIdth, Config.cHeight)// clear the viewport AFTER the matrix is reset
 
@@ -76,11 +75,6 @@ export class Gamemap {
                 }
             }
         }
-
-        // Draw the characters
-        for (let i = 0, l = this.characters.length; i < l; i++) {
-            this.characters[i].drawCharacter(context)
-        }
     }
 
     public clamp(value: number, min: number, max: number): number {
@@ -95,14 +89,6 @@ export class Gamemap {
 
     public translate(camX: number, camY: number, context: CanvasRenderingContext2D): void {
         context.translate(camX, camY)
-    }
-
-    public addPersonnage(char: Character): void {
-        this.characters.push(char)
-        if (char === RPG.joueur) {
-            this.camX = this.clamp(-(-(RPG.joueur.x * Config.tileSize) + Config.cWIdth / 2), 0, this.width * Config.tileSize - Config.cWIdth)
-            this.camY = this.clamp(-(-(RPG.joueur.y * Config.tileSize) + Config.cHeight / 2), 0, this.height * Config.tileSize - Config.cHeight)
-        }
     }
 
     // Elect and draw the correct tile from a tileset
@@ -145,8 +131,7 @@ export class Gamemap {
         return false
     }
 
-    public isNeighbor(joueur: Character, direction: any): string | undefined {
-        let nextPos = joueur.getCoordonneesAdjacentes(direction)
+    public isNeighbor(direction: number, nextPos: { x: number, y: number }): string | undefined {
         for (let j = 0; j < this.neighbors.length; ++j) {
             if (this.neighbors[j].objects.length > 0) {
                 for (let i = 0; i < this.neighbors[j].objects.length; ++i) {
@@ -159,19 +144,19 @@ export class Gamemap {
                     let checkY = (nextPos.y * Config.tileSize) + Config.tileSize
 
                     // Compares the joueur's with the TP area
-                    if (direction == RPG.DIRECTION.UP) {
+                    if (direction == Config.DIRECTION.UP) {
                         if (checkX > collX && checkX < collX + collWidth && checkY >= collY && checkY < collY + collHeight) {
                             return (this.neighbors[j].name.substr(3, this.neighbors[j].name.length))
                         }
-                    } else if (direction == RPG.DIRECTION.DOWN) {
+                    } else if (direction == Config.DIRECTION.DOWN) {
                         if (checkX > collX && checkX < collX + collWidth && checkY - collHeight == collY + collHeight) {
                             return (this.neighbors[j].name.substr(3, this.neighbors[j].name.length))
                         }
-                    } else if (direction == RPG.DIRECTION.LEFT) {
+                    } else if (direction == Config.DIRECTION.LEFT) {
                         if (checkX == collX && checkX < collX + collWidth && checkY >= collY && checkY < collY + collHeight) {
                             return (this.neighbors[j].name.substr(3, this.neighbors[j].name.length))
                         }
-                    } else if (direction == RPG.DIRECTION.RIGHT) {
+                    } else if (direction == Config.DIRECTION.RIGHT) {
                         if (checkX - collWidth == collX + collWidth && checkY >= collY && checkY < collY + collHeight) {
                             return (this.neighbors[j].name.substr(3, this.neighbors[j].name.length))
                         }

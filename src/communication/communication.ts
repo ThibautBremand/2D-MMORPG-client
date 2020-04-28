@@ -107,7 +107,6 @@ export module Communication {
         return name
     }
 
-
     function parseJson(message: string): any {
         let m: any
         try {

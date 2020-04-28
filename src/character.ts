@@ -1,6 +1,5 @@
 import { Gamemap } from "./gamemap.js"
 import { Config } from "./config/config.js"
-import { RPG } from "./rpg.js"
 
 let ANIMATION_LENGTH = 1
 let MOVEMENT_LENGTH = 10
@@ -28,7 +27,7 @@ export class Character {
         this.image.characterReference = this
     }
 
-    public drawCharacter(context: CanvasRenderingContext2D): void {
+    public drawCharacter(context: CanvasRenderingContext2D, joueur: Character, map: Gamemap): void {
         // Image's number to take for the animation
         let frame = 0
 
@@ -40,9 +39,9 @@ export class Character {
             this.etatAnimation = -1;
 
             // Initializes the map translation when the main entity is drawn
-            if(this === RPG.joueur) {
-                RPG.map.camX = RPG.map.clamp(-(-(RPG.joueur.x * Config.tileSize) + Config.cWIdth/2), 0, RPG.map.width * Config.tileSize - Config.cWIdth);
-                RPG.map.camY = RPG.map.clamp(-(-(RPG.joueur.y * Config.tileSize) + Config.cHeight/2), 0, RPG.map.height * Config.tileSize - Config.cHeight);
+            if(this === joueur) {
+                map.camX = map.clamp(-(-(joueur.x * Config.tileSize) + Config.cWIdth/2), 0, map.width * Config.tileSize - Config.cWIdth);
+                map.camY = map.clamp(-(-(joueur.y * Config.tileSize) + Config.cHeight/2), 0, map.height * Config.tileSize - Config.cHeight);
             }
         } else if(this.etatAnimation >= 0) {
             // Determines the image (frame) to display for the animation
@@ -55,25 +54,25 @@ export class Character {
             let pixelsAParcourir = 32 - (32 * (this.etatAnimation / MOVEMENT_LENGTH));
 
             // From this number, decides the offset for x & y
-            if(this.direction == RPG.DIRECTION.UP) {
+            if(this.direction == Config.DIRECTION.UP) {
                 decalageY = pixelsAParcourir;
-            } else if(this.direction == RPG.DIRECTION.DOWN) {
+            } else if(this.direction == Config.DIRECTION.DOWN) {
                 decalageY = -pixelsAParcourir;
-            } else if(this.direction == RPG.DIRECTION.LEFT) {
+            } else if(this.direction == Config.DIRECTION.LEFT) {
                 decalageX = pixelsAParcourir;
-            } else if(this.direction == RPG.DIRECTION.RIGHT) {
+            } else if(this.direction == Config.DIRECTION.RIGHT) {
                 decalageX = -pixelsAParcourir;
             }
 
             // One more frame
             this.etatAnimation++;
 
-            let tempocamX = RPG.map.clamp(-(-(RPG.joueur.x * Config.tileSize) + Config.cWIdth/2), 0, RPG.map.width * Config.tileSize - Config.cWIdth);
-            let tempocamY = RPG.map.clamp(-(-(RPG.joueur.y * Config.tileSize) + Config.cHeight/2), 0, RPG.map.height * Config.tileSize - Config.cHeight);
+            let tempocamX = map.clamp(-(-(joueur.x * Config.tileSize) + Config.cWIdth/2), 0, map.width * Config.tileSize - Config.cWIdth);
+            let tempocamY = map.clamp(-(-(joueur.y * Config.tileSize) + Config.cHeight/2), 0, map.height * Config.tileSize - Config.cHeight);
 
-            if (tempocamX != RPG.map.camX || tempocamY != RPG.map.camY) {
-                RPG.map.camX = tempocamX + Math.round(decalageX);
-                RPG.map.camY = tempocamY + Math.round(decalageY);
+            if (tempocamX != map.camX || tempocamY != map.camY) {
+                map.camX = tempocamX + Math.round(decalageX);
+                map.camY = tempocamY + Math.round(decalageY);
             }
         }
 
@@ -102,23 +101,6 @@ export class Character {
         context.fillText(this.name,(this.x * 32) - (this.image.characterReference.largeur / 2) + 16 + decalageX, (this.y * 32) - this.image.characterReference.hauteur + 24 + decalageY + 5);
     }
 
-    public getCoordonneesAdjacentes(direction: any):  {'x' : number, 'y' : number} {
-        let coord = {'x' : this.x, 'y' : this.y}
-        if ( direction == RPG.DIRECTION.DOWN ) {
-            coord.y++
-        }
-        else if ( direction == RPG.DIRECTION.LEFT ) {
-            coord.x--
-        }
-        else if ( direction == RPG.DIRECTION.RIGHT ) {
-            coord.x++
-        }
-        else if ( direction == RPG.DIRECTION.UP ) {
-            coord.y--
-        }
-        return coord
-    }
-
     public move(direction: any, map: Gamemap, mainChar: boolean): boolean {
         // If a movement is already proceeding, we refuse the movement
         if (mainChar && this.etatAnimation >= 0) {
@@ -127,7 +109,7 @@ export class Character {
 
         // Change the character's current direction
         this.direction = direction
-        let nextPos = this.getCoordonneesAdjacentes(direction)
+        let nextPos = this.nextPosition(direction)
 
         // Check if the next position is in the map
         if (nextPos.x < 0 || nextPos.y < 0 || nextPos.x >= map.width || nextPos.y >= map.height) {
@@ -147,5 +129,22 @@ export class Character {
         this.x = nextPos.x
         this.y = nextPos.y
         return true
+    }
+
+    public nextPosition(direction: number):  {'x' : number, 'y' : number} {
+        let coord = {'x' : this.x, 'y' : this.y}
+        if ( direction == Config.DIRECTION.DOWN ) {
+            coord.y++
+        }
+        else if ( direction == Config.DIRECTION.LEFT ) {
+            coord.x--
+        }
+        else if ( direction == Config.DIRECTION.RIGHT ) {
+            coord.x++
+        }
+        else if ( direction == Config.DIRECTION.UP ) {
+            coord.y--
+        }
+        return coord
     }
 }

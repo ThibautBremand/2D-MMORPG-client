@@ -9,17 +9,11 @@ export module RPG {
     // Global variables
     export let joueur: Character
     export let map: Gamemap
-    export const DIRECTION = {
-        UP: 0,
-        LEFT: 1,
-        DOWN: 2,
-        RIGHT: 3
-    }
 
     const messageUser: string = "User"
     const messageDir: string = "Dir"
 
-    const connectedCharsToDraw: any[] = []
+    // const characters: Character[] = []
 
     // 
     // Handle messages from the server
@@ -91,23 +85,30 @@ export module RPG {
     }
 
     function initPlayer(playerData: any): void {
-        joueur = new Character(parseInt(playerData.x), parseInt(playerData.y), DIRECTION.DOWN, playerData.name, playerData.GamemapID)
-        connectedCharsToDraw.push([joueur, playerData.tileFormula])
+        joueur = new Character(parseInt(playerData.x), parseInt(playerData.y), Config.DIRECTION.DOWN, playerData.name, playerData.GamemapID)
     }
 
     function initGamemap(playerData: any): void {
         map = new Gamemap(0, 0, 0, 0, playerData.Gamemap.raw)
         map.loadLayers()
         CharacterDrawer.generate(joueur, playerData.tileFormula)
-        map.addPersonnage(joueur)
+        addPersonnage(joueur, joueur)
     }
 
     // Add character to the game
     // Create a Character from the character data and draw it
     function addCharacter(character: any): void {
-        let newChar = new Character(parseInt(character.x), parseInt(character.y), DIRECTION.DOWN, character.name, character.GamemapID)
+        let newChar = new Character(parseInt(character.x), parseInt(character.y), Config.DIRECTION.DOWN, character.name, character.GamemapID)
         CharacterDrawer.generate(newChar, character.tileFormula)
-        map.addPersonnage(newChar)
+        addPersonnage(newChar, joueur)
+    }
+
+    function addPersonnage(char: Character, joueur: Character): void {
+        map.characters.push(char)
+        if (char === joueur) {
+            map.camX = map.clamp(-(-(joueur.x * Config.tileSize) + Config.cWIdth / 2), 0, map.width * Config.tileSize - Config.cWIdth)
+            map.camY = map.clamp(-(-(joueur.y * Config.tileSize) + Config.cHeight / 2), 0, map.height * Config.tileSize - Config.cHeight)
+        }
     }
 
     function parseJson(message: string): any {
@@ -147,8 +148,16 @@ export module RPG {
         }
         
         setInterval(() => {
-            map.drawMap(ctx!, ctxDebug!)
+            map.drawMap(ctx!)
+            drawCharacter(ctx!, joueur, map)
         }, 40)
+    }
+
+    function drawCharacter(context: CanvasRenderingContext2D, joueur: Character, map: Gamemap) {
+        // Draw the characters
+        for (let i = 0, l = map.characters.length; i < l; i++) {
+            map.characters[i].drawCharacter(context, joueur, map)
+        }
     }
 
     function initKeyboard(): void {
@@ -161,19 +170,19 @@ export module RPG {
             switch (key) {
                 // Up arrow, z, w, Z, W
                 case 38 : case 122 : case 119 : case 90 : case 87 :
-                    movePlayer(DIRECTION.UP)
+                    movePlayer(Config.DIRECTION.UP)
                     break
                 // Down arrow, s, S
                 case 40 : case 115 : case 83 :
-                    movePlayer(DIRECTION.DOWN)
+                    movePlayer(Config.DIRECTION.DOWN)
                     break
                 // Left arrow, q, a, Q, A
                 case 37 : case 113 : case 97 : case 81 : case 65 :
-                    movePlayer(DIRECTION.LEFT)
+                    movePlayer(Config.DIRECTION.LEFT)
                     break
                 // Right arrow, d, D
                 case 39 : case 100 : case 68 :
-                    movePlayer(DIRECTION.RIGHT)
+                    movePlayer(Config.DIRECTION.RIGHT)
                     break
                 // If the key is not used in the entity, we don't need to block its normal behavior
                 default :
@@ -185,20 +194,20 @@ export module RPG {
 
     // Communicate with the server about a player movement
     // Should be in communication.js
-    function movePlayer (movement: number): void {
+    function movePlayer (direction: number): void {
         // Try to move the character
         // If false is returned, the move couldn't be processed
-        if (!joueur.move(movement, map, true)) {
+        if (!joueur.move(direction, map, true)) {
             return
         }
 
         if (map.neighbors) {
-            let isTP = map.isNeighbor(joueur, movement)
+            let isTP = map.isNeighbor(direction, joueur.nextPosition(direction))
             if (isTP) {
-                Communication.sendTPMessage(movement, joueur.name, isTP)
+                Communication.sendTPMessage(direction, joueur.name, isTP)
                 return
             }
         }
-        Communication.sendMoveMessage(movement)
+        Communication.sendMoveMessage(direction)
     }
 }

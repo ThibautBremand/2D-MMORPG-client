@@ -1,10 +1,6 @@
 import { Character } from "./character.js";
 
 let params: any
-// Cache images
-// let images = {}
-let cptDraw = 0
-let TIMER = 0
 let spritesURL = "front/sprites/Universal-LPC-Spritesheet-Character-Generator/Universal-LPC-spritesheet/"
 
 export module CharacterDrawer {
@@ -488,7 +484,6 @@ export module CharacterDrawer {
         var img = new Image();
         loadImage(spritesURL + imgRef, img)
             .then(img => {
-                // images[imgRef] = img;
                 drawImage(ctx, img)
                 char.image.src = canvasChar.toDataURL('image/png');
                 callback(ctx, char, canvasChar, sex, params)
@@ -502,7 +497,6 @@ export module CharacterDrawer {
     // Load an image from the storage
     function loadImage(url: string, img: any): Promise<any> {
         return new Promise((resolve: any, reject: any) => {
-            // let img = new Image();
             img.addEventListener('load', () => resolve(img));
             img.addEventListener('error', () => {
                 reject(new Error(`Failed to load image's URL: ${url}`));
