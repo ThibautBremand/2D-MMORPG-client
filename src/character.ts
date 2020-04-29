@@ -13,19 +13,18 @@ export class Character {
     y: number
     direction: any
     name: string
-    etatAnimation: number
+    stateAnimation: number
     gamemapID: number
-    image: any
+    image: HTMLImageElement
 
     constructor(x: number, y: number, direction: any, nickname: string, gamemapID: number) {
         this.x = x
         this.y = y
         this.direction = direction
-        this.etatAnimation = -1
+        this.stateAnimation = -1
         this.name = nickname
         this.gamemapID = gamemapID
         this.image = new Image()
-        this.image.characterReference = this
     }
 
     public drawCharacter(context: CanvasRenderingContext2D, joueur: Character, map: Gamemap): void {
@@ -33,73 +32,63 @@ export class Character {
         let frame = 0
 
         // Offset to apply to the entity's position
-        let decalageX = 0, decalageY = 0
+        let offsetX = 0, offsetY = 0
 
-        if(this.etatAnimation >= MOVEMENT_LENGTH) {
-            // Aborts the movement if the timer is done
-            this.etatAnimation = -1;
+        if(this.stateAnimation >= MOVEMENT_LENGTH) {
+            // Abort the movement if the timer is done
+            this.stateAnimation = -1;
 
-            // Initializes the map translation when the main entity is drawn
+            // Initialize the map translation when the main entity is drawn
             if(this === joueur) {
                 map.camX = map.clamp(-(-(joueur.x * Config.tileSize) + Config.cWIdth/2), 0, map.width * Config.tileSize - Config.cWIdth);
                 map.camY = map.clamp(-(-(joueur.y * Config.tileSize) + Config.cHeight/2), 0, map.height * Config.tileSize - Config.cHeight);
             }
-        } else if(this.etatAnimation >= 0) {
-            // Determines the image (frame) to display for the animation
-            frame = Math.floor(this.etatAnimation / ANIMATION_LENGTH);
+        } else if(this.stateAnimation >= 0) {
+            // Determine the image (frame) to display for the animation
+            frame = Math.floor(this.stateAnimation / ANIMATION_LENGTH);
             if(frame > 8) { //3
                 frame %= 9; //4
             }
 
             // Pixels count left to proceed
-            let pixelsAParcourir = 32 - (32 * (this.etatAnimation / MOVEMENT_LENGTH));
+            let pixelsAParcourir = 32 - (32 * (this.stateAnimation / MOVEMENT_LENGTH));
 
-            // From this number, decides the offset for x & y
-            if(this.direction == Config.DIRECTION.UP) {
-                decalageY = pixelsAParcourir;
-            } else if(this.direction == Config.DIRECTION.DOWN) {
-                decalageY = -pixelsAParcourir;
-            } else if(this.direction == Config.DIRECTION.LEFT) {
-                decalageX = pixelsAParcourir;
-            } else if(this.direction == Config.DIRECTION.RIGHT) {
-                decalageX = -pixelsAParcourir;
+            // From this number, decide the offset for x & y
+            if (this.direction == Config.DIRECTION.UP) {
+                offsetY = pixelsAParcourir;
+            } else if (this.direction == Config.DIRECTION.DOWN) {
+                offsetY = -pixelsAParcourir;
+            } else if (this.direction == Config.DIRECTION.LEFT) {
+                offsetX = pixelsAParcourir;
+            } else if (this.direction == Config.DIRECTION.RIGHT) {
+                offsetX = -pixelsAParcourir;
             }
 
             // One more frame
-            this.etatAnimation++;
+            this.stateAnimation++;
 
             let tempocamX = map.clamp(-(-(joueur.x * Config.tileSize) + Config.cWIdth/2), 0, map.width * Config.tileSize - Config.cWIdth);
             let tempocamY = map.clamp(-(-(joueur.y * Config.tileSize) + Config.cHeight/2), 0, map.height * Config.tileSize - Config.cHeight);
 
             if (tempocamX != map.camX || tempocamY != map.camY) {
-                map.camX = tempocamX + Math.round(decalageX);
-                map.camY = tempocamY + Math.round(decalageY);
+                map.camX = tempocamX + Math.round(offsetX);
+                map.camY = tempocamY + Math.round(offsetY);
             }
         }
 
-        /*
-         * If both conditions are false, means that the user is not moving
-         * so we keep the value 0 for the following variables
-         * frame, decalageX et decalageY
-         */
-
-        if ( this.image != null && this.image.width > 0 ) {
-            this.image.characterReference.largeur = this.image.width / TILESET_WIDTH;
-        }
-        if ( this.image != null && this.image.height > 0 ) {
-            this.image.characterReference.hauteur = this.image.height / TILESET_HEIGHT;
-        }
-        if ( this.image.width > 0 &&  this.image.height > 0) {
+        // If both conditions are false, means that the user is not moving, so we keep the value 0
+        // for the following variables: frame, offsetX, offsetY
+        if (this.image.width > 0 &&  this.image.height > 0) {
             context.drawImage(
                 this.image,
-                this.image.characterReference.largeur * frame, this.direction * this.image.characterReference.hauteur + this.image.characterReference.hauteur * ROW_MOVEMENT, // Source rectangle's origin point to take in our image
-                this.image.characterReference.largeur, this.image.characterReference.hauteur, // Source rectangle's size (our entity's size)
+                this.width() * frame, this.direction * this.height() + this.height() * ROW_MOVEMENT, // Source rectangle's origin point to take in our image
+                this.width(), this.height(), // Source rectangle's size (our entity's size)
                 // Destination point (depends upon entity's size)
-                (this.x * 32) - (this.image.characterReference.largeur / 2) + 16 + decalageX, (this.y * 32) - this.image.characterReference.hauteur + 24 + decalageY,
-                this.image.characterReference.largeur, this.image.characterReference.hauteur // Destination rectangle's size (our entity's size)
-            );
+                (this.x * 32) - (this.width() / 2) + 16 + offsetX, (this.y * 32) - this.height() + 24 + offsetY,
+                this.width(), this.height() // Destination rectangle's size (our entity's size)
+            )
         }
-        context.fillText(this.name,(this.x * 32) - (this.image.characterReference.largeur / 2) + 16 + decalageX, (this.y * 32) - this.image.characterReference.hauteur + 24 + decalageY + 5);
+        context.fillText(this.name,(this.x * 32) - (this.width() / 2) + 16 + offsetX, (this.y * 32) - this.height() + 24 + offsetY + 5)
     }
 
     public generate(json: any): void {
@@ -108,7 +97,7 @@ export class Character {
 
     public move(direction: any, map: Gamemap, mainChar: boolean): boolean {
         // If a movement is already proceeding, we refuse the movement
-        if (mainChar && this.etatAnimation >= 0) {
+        if (mainChar && this.stateAnimation >= 0) {
             return false
         }
 
@@ -128,7 +117,7 @@ export class Character {
         }
 
         // Start the animation
-        this.etatAnimation = 1
+        this.stateAnimation = 1
 
         // Proceed the movement
         this.x = nextPos.x
@@ -138,18 +127,32 @@ export class Character {
 
     public nextPosition(direction: number):  {'x' : number, 'y' : number} {
         let coord = {'x' : this.x, 'y' : this.y}
-        if ( direction == Config.DIRECTION.DOWN ) {
+        if (direction == Config.DIRECTION.DOWN) {
             coord.y++
         }
-        else if ( direction == Config.DIRECTION.LEFT ) {
+        else if (direction == Config.DIRECTION.LEFT) {
             coord.x--
         }
-        else if ( direction == Config.DIRECTION.RIGHT ) {
+        else if (direction == Config.DIRECTION.RIGHT) {
             coord.x++
         }
-        else if ( direction == Config.DIRECTION.UP ) {
+        else if (direction == Config.DIRECTION.UP) {
             coord.y--
         }
         return coord
+    }
+
+    private width(): number {
+        if (!this.image) {
+            return 0
+        }
+        return this.image.width / TILESET_WIDTH
+    }
+
+    private height(): number {
+        if (!this.image) {
+            return 0
+        }
+        return this.image.height / TILESET_HEIGHT
     }
 }

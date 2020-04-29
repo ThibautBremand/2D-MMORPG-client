@@ -474,11 +474,9 @@ export module CharacterDrawer {
         }
         return f(params)
     }
-    
-    function noop () {
-    
-    }
-    
+
+    function noop () {}
+
     // Called each time we want to draw a part of a character
     function getImage(ctx: CanvasRenderingContext2D, imgRef: string, char: Character, canvasChar: HTMLCanvasElement, sex: string, params: any, callback: any) {
         var img = new Image();
