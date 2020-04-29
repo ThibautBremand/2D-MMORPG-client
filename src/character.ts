@@ -92,7 +92,7 @@ export class Character {
     }
 
     public generate(json: any): void {
-        CharacterDrawer.generate(this, json)
+        CharacterDrawer.generate(this.image, json)
     }
 
     public move(direction: any, map: Gamemap, mainChar: boolean): boolean {

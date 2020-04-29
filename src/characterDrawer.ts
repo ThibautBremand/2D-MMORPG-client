@@ -1,17 +1,15 @@
-import { Character } from "./character.js";
-
 let params: any
 let spritesURL = "front/sprites/Universal-LPC-Spritesheet-Character-Generator/Universal-LPC-spritesheet/"
 
 export module CharacterDrawer {
-    export function generate(char: Character, json: any): void {
+    export function generate(characterImage: HTMLImageElement, json: any): void {
         let newCanvas = document.createElement("canvas");
         params = JSON.parse(json);
-        redraw(char, newCanvas, params);
+        redraw(characterImage, newCanvas, params);
     }
 
     // Called each time we redraw the canvas
-    function redraw(char: Character, canvasChar: HTMLCanvasElement, params: any): void {
+    function redraw(characterImage: HTMLImageElement, canvasChar: HTMLCanvasElement, params: any): void {
         // If an oversize element is being used, expand canvas,
         // otherwise return it to normal size
         let oversize = false
@@ -38,64 +36,64 @@ export module CharacterDrawer {
             sex = "female"
         }
 
-        drawBody(ctx, char, canvasChar, sex, params)
+        drawBody(ctx, characterImage, canvasChar, sex, params)
     }
 
     function imgExtention(img: string): string {
         return img + ".png"
     }
 
-    function drawBody(ctx: CanvasRenderingContext2D, char: Character, canvasChar: HTMLCanvasElement, sex: string, params: any) {
+    function drawBody(ctx: CanvasRenderingContext2D, characterImage: HTMLImageElement, canvasChar: HTMLCanvasElement, sex: string, params: any) {
         let skinColor = checkParam((e: { body: any }) => {return e.body})
         let imgPath = imgExtention("body/" + sex + "/" + skinColor)
-        getImage(ctx, imgPath, char, canvasChar, sex, params, drawEars)
+        getImage(ctx, imgPath, characterImage, canvasChar, sex, params, drawEars)
     }
 
-    function drawEars(ctx: CanvasRenderingContext2D, char: Character, canvasChar: HTMLCanvasElement, sex: string, params: any) {
+    function drawEars(ctx: CanvasRenderingContext2D, characterImage: HTMLImageElement, canvasChar: HTMLCanvasElement, sex: string, params: any) {
         let skinColor = checkParam((e: { body: any }) => {return e.body})
         if (params.ears) {
             let res = params.ears.split("_")
             let imgPath = imgExtention("body/" + sex + "/ears/" + res[0] + "ears_" + skinColor)
-            getImage(ctx, imgPath, char, canvasChar, sex, params, drawEyes)
+            getImage(ctx, imgPath, characterImage, canvasChar, sex, params, drawEyes)
         } else {
-            drawEyes(ctx, char, canvasChar, sex, params)
+            drawEyes(ctx, characterImage, canvasChar, sex, params)
         }
     }
 
-    function drawEyes(ctx: CanvasRenderingContext2D, char: Character, canvasChar: HTMLCanvasElement, sex: string, params: any) {
+    function drawEyes(ctx: CanvasRenderingContext2D, characterImage: HTMLImageElement, canvasChar: HTMLCanvasElement, sex: string, params: any) {
         if (params.eyes) {
             let imgPath = imgExtention("body/" + sex + "/eyes/" + params.eyes)
-            getImage(ctx, imgPath, char, canvasChar, sex, params, drawNose)
+            getImage(ctx, imgPath, characterImage, canvasChar, sex, params, drawNose)
         } else {
-            drawNose(ctx, char, canvasChar, sex, params)
+            drawNose(ctx, characterImage, canvasChar, sex, params)
         }
     }
-    
-    function drawNose(ctx: CanvasRenderingContext2D, char: Character, canvasChar: HTMLCanvasElement, sex: string, params: any) {
+
+    function drawNose(ctx: CanvasRenderingContext2D, characterImage: HTMLImageElement, canvasChar: HTMLCanvasElement, sex: string, params: any) {
         let skinColor = checkParam((e: { body: any }) => {return e.body})
         if (params.nose) {
             let res = params.nose.split("_")
             let imgPath = imgExtention("body/" + sex + "/nose/" + res[0] + "nose_" + skinColor)
-            getImage(ctx, imgPath, char, canvasChar, sex, params, drawHair)
+            getImage(ctx, imgPath, characterImage, canvasChar, sex, params, drawHair)
         } else {
-            drawHair(ctx, char, canvasChar, sex, params)
+            drawHair(ctx, characterImage, canvasChar, sex, params)
         }
     }
-    
-    function drawHair(ctx: CanvasRenderingContext2D, char: Character, canvasChar: HTMLCanvasElement, sex: string, params: any) {
+
+    function drawHair(ctx: CanvasRenderingContext2D, characterImage: HTMLImageElement, canvasChar: HTMLCanvasElement, sex: string, params: any) {
         if (params.hair) {
             let res = params.hair.split("_")
             let imgPath = imgExtention("hair/" + sex + "/" + res[0] + "/" + res[1])
             if (res[2]) {
                 imgPath = imgExtention("hair/" + sex + "/" + res[0] + "/" + res[1] + "-" + res[2])
             }
-            getImage(ctx, imgPath, char, canvasChar, sex, params, drawCape)
+            getImage(ctx, imgPath, characterImage, canvasChar, sex, params, drawCape)
         } else {
-            drawCape(ctx, char, canvasChar, sex, params)
+            drawCape(ctx, characterImage, canvasChar, sex, params)
         }
     }
-    
-    function drawCape(ctx: CanvasRenderingContext2D, char: Character, canvasChar: HTMLCanvasElement, sex: string, params: any) {
+
+    function drawCape(ctx: CanvasRenderingContext2D, characterImage: HTMLImageElement, canvasChar: HTMLCanvasElement, sex: string, params: any) {
         if (params.cape) {
             let res = params.cape.split("_")
             let imgPath = "torso/back/cape/"
@@ -106,7 +104,7 @@ export module CharacterDrawer {
                     break
                 case "trimmed":
                     imgPath += res[0] + "/" + sex + "/" + "trimcape_" + res[1]
-                    if (res[2] != null) {
+                    if (res[2]) {
                         imgPath += res[2]
                     }
                     imgPath = imgExtention(imgPath)
@@ -115,45 +113,45 @@ export module CharacterDrawer {
                     imgPath += "normal/" + sex + "/" + "cape_" + res[0]
                     imgPath = imgExtention(imgPath)
             }
-            getImage(ctx, imgPath, char, canvasChar, sex, params, drawArmor)
+            getImage(ctx, imgPath, characterImage, canvasChar, sex, params, drawArmor)
         } else {
-            drawArmor(ctx, char, canvasChar, sex, params)
+            drawArmor(ctx, characterImage, canvasChar, sex, params)
         }
     }
-    
-    function drawArmor(ctx: CanvasRenderingContext2D, char: Character, canvasChar: HTMLCanvasElement, sex: string, params: any) {
+
+    function drawArmor(ctx: CanvasRenderingContext2D, characterImage: HTMLImageElement, canvasChar: HTMLCanvasElement, sex: string, params: any) {
         if (params.armor) {
             let res = params.armor.split("_")
             switch(res[0]) {
                 case "chest":
                     let imgPath = imgExtention("torso/" + res[1] + "/" + "chest_" + sex)
-                    getImage(ctx, imgPath, char, canvasChar, sex, params, drawJacket)
+                    getImage(ctx, imgPath, characterImage, canvasChar, sex, params, drawJacket)
                     break
                 default:
-                    drawJacket(ctx, char, canvasChar, sex, params)
+                    drawJacket(ctx, characterImage, canvasChar, sex, params)
             }
         } else {
-            drawJacket(ctx, char, canvasChar, sex, params)
+            drawJacket(ctx, characterImage, canvasChar, sex, params)
         }
     }
-    
-    function drawJacket(ctx: CanvasRenderingContext2D, char: Character, canvasChar: HTMLCanvasElement, sex: string, params: any) {
+
+    function drawJacket(ctx: CanvasRenderingContext2D, characterImage: HTMLImageElement, canvasChar: HTMLCanvasElement, sex: string, params: any) {
         if (params.jacket) {
             let res = params.jacket.split("_")
             switch(res[0]) {
                 case "tabard":
                     let imgPath = imgExtention("torso/chain/" + res[0] + "/" + "jacket_" + sex)
-                    getImage(ctx, imgPath, char, canvasChar, sex, params, drawTie)
+                    getImage(ctx, imgPath, characterImage, canvasChar, sex, params, drawTie)
                     break
                 default:
-                    drawTie(ctx, char, canvasChar, sex, params)
+                    drawTie(ctx, characterImage, canvasChar, sex, params)
             }
         } else {
-            drawTie(ctx, char, canvasChar, sex, params)
+            drawTie(ctx, characterImage, canvasChar, sex, params)
         }
     }
-    
-    function drawTie(ctx: CanvasRenderingContext2D, char: Character, canvasChar: HTMLCanvasElement, sex: string, params: any) {
+
+    function drawTie(ctx: CanvasRenderingContext2D, characterImage: HTMLImageElement, canvasChar: HTMLCanvasElement, sex: string, params: any) {
         if (params.tie) {
             let res = params.tie.split("_")
             let imgPath = "formal_" + sex + "_no_th-sh/"
@@ -161,74 +159,74 @@ export module CharacterDrawer {
                 case "on":
                     imgPath += "tie"
                     imgPath = imgExtention(imgPath)
-                    getImage(ctx, imgPath, char, canvasChar, sex, params, drawArms)
+                    getImage(ctx, imgPath, characterImage, canvasChar, sex, params, drawArms)
                     break
                 case "bow":
                     imgPath += "bowtie"
                     imgPath = imgExtention(imgPath)
-                    getImage(ctx, imgPath, char, canvasChar, sex, params, drawArms)
+                    getImage(ctx, imgPath, characterImage, canvasChar, sex, params, drawArms)
                     break
                 default:
-                    drawArms(ctx, char, canvasChar, sex, params)
+                    drawArms(ctx, characterImage, canvasChar, sex, params)
             }
         } else {
-            drawArms(ctx, char, canvasChar, sex, params)
+            drawArms(ctx, characterImage, canvasChar, sex, params)
         }
     }
-    
-    function drawArms(ctx: CanvasRenderingContext2D, char: Character, canvasChar: HTMLCanvasElement, sex: string, params: any) {
+
+    function drawArms(ctx: CanvasRenderingContext2D, characterImage: HTMLImageElement, canvasChar: HTMLCanvasElement, sex: string, params: any) {
         if (params.arms) {
             let res = params.arms.split("_")
             let imgPath = imgExtention("torso/" + res[0] + "/" + "arms_" + sex)
-            getImage(ctx, imgPath, char, canvasChar, sex, params, drawShoulders)
+            getImage(ctx, imgPath, characterImage, canvasChar, sex, params, drawShoulders)
         } else {
-            drawShoulders(ctx, char, canvasChar, sex, params)
+            drawShoulders(ctx, characterImage, canvasChar, sex, params)
         }
     }
-    
-    function drawShoulders(ctx: CanvasRenderingContext2D, char: Character, canvasChar: HTMLCanvasElement, sex: string, params: any) {
+
+    function drawShoulders(ctx: CanvasRenderingContext2D, characterImage: HTMLImageElement, canvasChar: HTMLCanvasElement, sex: string, params: any) {
         if (params.shoulders) {
             let res = params.shoulders.split("_")
             let imgPath = imgExtention("torso/" + res[0] + "/" + "shoulders_" + sex)
             switch(res[0]) {
                 case "leather":
-                    getImage(ctx, imgPath, char, canvasChar, sex, params, drawMail)
+                    getImage(ctx, imgPath, characterImage, canvasChar, sex, params, drawMail)
                     break
                 default:
-                    drawMail(ctx, char, canvasChar, sex, params)
+                    drawMail(ctx, characterImage, canvasChar, sex, params)
             }
         } else {
-            drawMail(ctx, char, canvasChar, sex, params)
+            drawMail(ctx, characterImage, canvasChar, sex, params)
         }
     }
-    
-    function drawMail(ctx: CanvasRenderingContext2D, char: Character, canvasChar: HTMLCanvasElement, sex: string, params: any) {
+
+    function drawMail(ctx: CanvasRenderingContext2D, characterImage: HTMLImageElement, canvasChar: HTMLCanvasElement, sex: string, params: any) {
         if (params.mail) {
             let res = params.mail.split("_")
             let imgPath = imgExtention("torso/" + res[0] + "/" + "mail_" + sex)
             switch(res[0]) {
                 case "chain":
-                    getImage(ctx, imgPath, char, canvasChar, sex, params, drawGown)
+                    getImage(ctx, imgPath, characterImage, canvasChar, sex, params, drawGown)
                     break
                 default:
-                    drawGown(ctx, char, canvasChar, sex, params)
+                    drawGown(ctx, characterImage, canvasChar, sex, params)
             }
         } else {
-            drawGown(ctx, char, canvasChar, sex, params)
+            drawGown(ctx, characterImage, canvasChar, sex, params)
         }
     }
-    
-    function drawGown(ctx: CanvasRenderingContext2D, char: Character, canvasChar: HTMLCanvasElement, sex: string, params: any) {
+
+    function drawGown(ctx: CanvasRenderingContext2D, characterImage: HTMLImageElement, canvasChar: HTMLCanvasElement, sex: string, params: any) {
         if (params.gown) {
             let res = params.mail.split("_")
             let imgPath = imgExtention("torso/dress_female/" + res[0])
-            getImage(ctx, imgPath, char, canvasChar, sex, params, drawClothes)
+            getImage(ctx, imgPath, characterImage, canvasChar, sex, params, drawClothes)
         } else {
-            drawClothes(ctx, char, canvasChar, sex, params)
+            drawClothes(ctx, characterImage, canvasChar, sex, params)
         }
     }
-    
-    function drawClothes(ctx: CanvasRenderingContext2D, char: Character, canvasChar: HTMLCanvasElement, sex: string, params: any) {
+
+    function drawClothes(ctx: CanvasRenderingContext2D, characterImage: HTMLImageElement, canvasChar: HTMLCanvasElement, sex: string, params: any) {
         if (params.clothes) {
             let res = params.clothes.split("_")
             let imgPath = ""
@@ -237,9 +235,9 @@ export module CharacterDrawer {
                 case "dress":
                     if (res[1] == "sash") { // (dress_female)
                         imgPath = imgExtention("torso/dress_female/" + "dress_w_" + res[1] + "_female")
-                        getImage(ctx, imgPath, char, canvasChar, sex, params, drawLegs)
+                        getImage(ctx, imgPath, characterImage, canvasChar, sex, params, drawLegs)
                     } else {
-                        drawLegs(ctx, char, canvasChar, sex, params)
+                        drawLegs(ctx, characterImage, canvasChar, sex, params)
                     }
                     break
                 // Robe
@@ -249,96 +247,96 @@ export module CharacterDrawer {
                         imgPath += " " + res[2]
                     }
                     imgPath = imgExtention(imgPath)
-                    getImage(ctx, imgPath, char, canvasChar, sex, params, drawLegs)
+                    getImage(ctx, imgPath, characterImage, canvasChar, sex, params, drawLegs)
                     break
                 // Shirts
                 case "pirate" || "sleeveless":
                     imgPath = imgExtention("torso/shirts/sleeveless/" + sex + "/" + res[1] + "_" + res[0])
-                    getImage(ctx, imgPath, char, canvasChar, sex, params, drawLegs)
+                    getImage(ctx, imgPath, characterImage, canvasChar, sex, params, drawLegs)
                     break
                 case "longsleeve":
                     imgPath = imgExtention("torso/shirts/longsleeve/" + sex + "/" + res[1] + "_" + res[0])
-                    getImage(ctx, imgPath, char, canvasChar, sex, params, drawLegs)
+                    getImage(ctx, imgPath, characterImage, canvasChar, sex, params, drawLegs)
                     break
                 // Tunics
                 case "tunic":
                     imgPath = imgExtention("torso/tunics/" + sex + "/" + res[1] + "_" + res[0])
-                    getImage(ctx, imgPath, char, canvasChar, sex, params, drawLegs)
+                    getImage(ctx, imgPath, characterImage, canvasChar, sex, params, drawLegs)
                     break
                 default:
-                    drawLegs(ctx, char, canvasChar, sex, params)
+                    drawLegs(ctx, characterImage, canvasChar, sex, params)
             }
         } else {
-            drawLegs(ctx, char, canvasChar, sex, params)
+            drawLegs(ctx, characterImage, canvasChar, sex, params)
         }
     }
-    
-    function drawLegs(ctx: CanvasRenderingContext2D, char: Character, canvasChar: HTMLCanvasElement, sex: string, params: any) {
+
+    function drawLegs(ctx: CanvasRenderingContext2D, characterImage: HTMLImageElement, canvasChar: HTMLCanvasElement, sex: string, params: any) {
         if (params.legs) {
             let res = params.legs.split("_")
             let imgPath = ""
             switch(res[0]) {
                 case "pants":
                     imgPath = imgExtention("legs/pants/" + sex + "/" + res[1] + "_" + res[0] + "_" + sex)
-                    getImage(ctx, imgPath, char, canvasChar, sex, params, drawGreaves)
+                    getImage(ctx, imgPath, characterImage, canvasChar, sex, params, drawGreaves)
                     break
                 case "robe":
                     imgPath = imgExtention("legs/skirt/" + sex + "/" + res[0] + "_" + res[1] + "_" + sex + "_incomplete")
-                    getImage(ctx, imgPath, char, canvasChar, sex, params, drawGreaves)
+                    getImage(ctx, imgPath, characterImage, canvasChar, sex, params, drawGreaves)
                     break
                 case "sara":
                     imgPath = imgExtention("legs/pants/" + sex + "/" + "SaraLeggings")
-                    getImage(ctx, imgPath, char, canvasChar, sex, params, drawGreaves)
+                    getImage(ctx, imgPath, characterImage, canvasChar, sex, params, drawGreaves)
                     break
                 default:
-                    drawGreaves(ctx, char, canvasChar, sex, params)
+                    drawGreaves(ctx, characterImage, canvasChar, sex, params)
             }
         } else {
-            drawGreaves(ctx, char, canvasChar, sex, params)
+            drawGreaves(ctx, characterImage, canvasChar, sex, params)
         }
     }
-    
-    function drawGreaves(ctx: CanvasRenderingContext2D, char: Character, canvasChar: HTMLCanvasElement, sex: string, params: any) {
+
+    function drawGreaves(ctx: CanvasRenderingContext2D, characterImage: HTMLImageElement, canvasChar: HTMLCanvasElement, sex: string, params: any) {
         if (params.greaves) {
             let res = params.greaves.split("_")
             let imgPath = ""
             switch(res[0]) {
                 case "metal":
                     imgPath = imgExtention("legs/armor/" + sex + "/" + res[0] + "_pants_" + sex)
-                    getImage(ctx, imgPath, char, canvasChar, sex, params, drawFormal)
+                    getImage(ctx, imgPath, characterImage, canvasChar, sex, params, drawFormal)
                     break
                 case "golden":
                     imgPath = imgExtention("legs/armor/" + sex + "/" + res[0] + "_greaves_" + sex)
-                    getImage(ctx, imgPath, char, canvasChar, sex, params, drawFormal)
+                    getImage(ctx, imgPath, characterImage, canvasChar, sex, params, drawFormal)
                     break
                 default:
-                    drawFormal(ctx, char, canvasChar, sex, params)
+                    drawFormal(ctx, characterImage, canvasChar, sex, params)
             }
         } else {
-            drawFormal(ctx, char, canvasChar, sex, params)
+            drawFormal(ctx, characterImage, canvasChar, sex, params)
         }
     }
-    
-    function drawFormal(ctx: CanvasRenderingContext2D, char: Character, canvasChar: HTMLCanvasElement, sex: string, params: any) {
+
+    function drawFormal(ctx: CanvasRenderingContext2D, characterImage: HTMLImageElement, canvasChar: HTMLCanvasElement, sex: string, params: any) {
         if (params.formal) {
             let res = params.legs.split("_");
             let imgPath = imgExtention("formal_" + sex + "_no_th-sh/" + res[0])
-            getImage(ctx, imgPath, char, canvasChar, sex, params, drawBracelet)
+            getImage(ctx, imgPath, characterImage, canvasChar, sex, params, drawBracelet)
         } else {
-            drawBracelet(ctx, char, canvasChar, sex, params)
+            drawBracelet(ctx, characterImage, canvasChar, sex, params)
         }
     }
-    
-    function drawBracelet(ctx: CanvasRenderingContext2D, char: Character, canvasChar: HTMLCanvasElement, sex: string, params: any) {
+
+    function drawBracelet(ctx: CanvasRenderingContext2D, characterImage: HTMLImageElement, canvasChar: HTMLCanvasElement, sex: string, params: any) {
         if (params.bracelet && params.bracelet == "on") {
             let imgPath = imgExtention("hands/bracelets/bracelet")
-            getImage(ctx, imgPath, char, canvasChar, sex, params, drawBracers)
+            getImage(ctx, imgPath, characterImage, canvasChar, sex, params, drawBracers)
         } else {
-            drawBracers(ctx, char, canvasChar, sex, params)
+            drawBracers(ctx, characterImage, canvasChar, sex, params)
         }
     }
-    
-    function drawBracers(ctx: CanvasRenderingContext2D, char: Character, canvasChar: HTMLCanvasElement, sex: string, params: any) {
+
+    function drawBracers(ctx: CanvasRenderingContext2D, characterImage: HTMLImageElement, canvasChar: HTMLCanvasElement, sex: string, params: any) {
         if (params.bracers) {
             let res = params.bracers.split("_")
             let imgPath = ""
@@ -347,23 +345,23 @@ export module CharacterDrawer {
             } else {
                 imgPath = imgExtention("hands/bracers/" + sex + "/" + res[0] + "_bracers_" + sex)
             }
-            getImage(ctx, imgPath, char, canvasChar, sex, params, drawGloves)
+            getImage(ctx, imgPath, characterImage, canvasChar, sex, params, drawGloves)
         } else {
-            drawGloves(ctx, char, canvasChar, sex, params)
+            drawGloves(ctx, characterImage, canvasChar, sex, params)
         }
     }
-    
-    function drawGloves(ctx: CanvasRenderingContext2D, char: Character, canvasChar: HTMLCanvasElement, sex: string, params: any) {
+
+    function drawGloves(ctx: CanvasRenderingContext2D, characterImage: HTMLImageElement, canvasChar: HTMLCanvasElement, sex: string, params: any) {
         if (params.gloves) {
             let res = params.gloves.split("_")
             let imgPath = imgExtention("hands/gloves/" + sex + "/" + res[0] + "_gloves_" + sex)
-            getImage(ctx, imgPath, char, canvasChar, sex, params, drawShoes)
+            getImage(ctx, imgPath, characterImage, canvasChar, sex, params, drawShoes)
         } else {
-            drawShoes(ctx, char, canvasChar, sex, params)
+            drawShoes(ctx, characterImage, canvasChar, sex, params)
         }
     }
-    
-    function drawShoes(ctx: CanvasRenderingContext2D, char: Character, canvasChar: HTMLCanvasElement, sex: string, params: any) {
+
+    function drawShoes(ctx: CanvasRenderingContext2D, characterImage: HTMLImageElement, canvasChar: HTMLCanvasElement, sex: string, params: any) {
         if (params.shoes) {
             let res = params.shoes.split("_")
             let imgPath = ""
@@ -379,13 +377,13 @@ export module CharacterDrawer {
                 default:
                     imgPath = imgExtention("feet/shoes/" + sex + "/" + res[0] + "_shoes_" + sex)
             }
-            getImage(ctx, imgPath, char, canvasChar, sex, params, drawBelt)
+            getImage(ctx, imgPath, characterImage, canvasChar, sex, params, drawBelt)
         } else {
-            drawBelt(ctx, char, canvasChar, sex, params)
+            drawBelt(ctx, characterImage, canvasChar, sex, params)
         }
     }
-    
-    function drawBelt(ctx: CanvasRenderingContext2D, char: Character, canvasChar: HTMLCanvasElement, sex: string, params: any) {
+
+    function drawBelt(ctx: CanvasRenderingContext2D, characterImage: HTMLImageElement, canvasChar: HTMLCanvasElement, sex: string, params: any) {
         if (params.belt) {
             let res = params.belt.split("_")
             let imgPath = ""
@@ -400,66 +398,66 @@ export module CharacterDrawer {
             } else {
                 imgPath = imgExtention("belt/metal/" + sex + "/" + res[0] + "_" + sex + "_no_th-sh")
             }
-            getImage(ctx, imgPath, char, canvasChar, sex, params, drawBuckle)
+            getImage(ctx, imgPath, characterImage, canvasChar, sex, params, drawBuckle)
         } else {
-            drawBuckle(ctx, char, canvasChar, sex, params)
+            drawBuckle(ctx, characterImage, canvasChar, sex, params)
         }
     }
-    
-    function drawBuckle(ctx: CanvasRenderingContext2D, char: Character, canvasChar: HTMLCanvasElement, sex: string, params: any) {
+
+    function drawBuckle(ctx: CanvasRenderingContext2D, characterImage: HTMLImageElement, canvasChar: HTMLCanvasElement, sex: string, params: any) {
         if (params.buckle) {
             let res = params.buckle.split("_")
             let imgPath = imgExtention("belt/buckles_" + sex + "_no_th-sh/" + res[0])
-            getImage(ctx, imgPath, char, canvasChar, sex, params, drawNecklace)
+            getImage(ctx, imgPath, characterImage, canvasChar, sex, params, drawNecklace)
         }
         else {
-            drawNecklace(ctx, char, canvasChar, sex, params)
+            drawNecklace(ctx, characterImage, canvasChar, sex, params)
         }
     }
-    
-    function drawNecklace(ctx: CanvasRenderingContext2D, char: Character, canvasChar: HTMLCanvasElement, sex: string, params: any) {
+
+    function drawNecklace(ctx: CanvasRenderingContext2D, characterImage: HTMLImageElement, canvasChar: HTMLCanvasElement, sex: string, params: any) {
         if (params.necklace) {
             let res = params.necklace.split("_")
             let imgPath = imgExtention("accessories/necklaces_" + sex + "_ no_th-sh/" + res[0])
-            getImage(ctx, imgPath, char, canvasChar, sex, params, drawCapeacc)
+            getImage(ctx, imgPath, characterImage, canvasChar, sex, params, drawCapeacc)
         } else {
-            drawCapeacc(ctx, char, canvasChar, sex, params)
+            drawCapeacc(ctx, characterImage, canvasChar, sex, params)
         }
     }
-    
-    function drawCapeacc(ctx: CanvasRenderingContext2D, char: Character, canvasChar: HTMLCanvasElement, sex: string, params: any) {
+
+    function drawCapeacc(ctx: CanvasRenderingContext2D, characterImage: HTMLImageElement, canvasChar: HTMLCanvasElement, sex: string, params: any) {
         if (params.capeacc) {
             let res = params.capeacc.split("_")
             let imgPath = imgExtention("accessories/neck/cape" + res[0] + "/" + sex + "/" + "cape" + res[0] + "_" + res[1])
-            getImage(ctx, imgPath, char, canvasChar, sex, params, drawHat)
+            getImage(ctx, imgPath, characterImage, canvasChar, sex, params, drawHat)
         } else {
-            drawHat(ctx, char, canvasChar, sex, params)
+            drawHat(ctx, characterImage, canvasChar, sex, params)
         }
     }
-    
-    function drawHat(ctx: CanvasRenderingContext2D, char: Character, canvasChar: HTMLCanvasElement, sex: string, params: any) {
+
+    function drawHat(ctx: CanvasRenderingContext2D, characterImage: HTMLImageElement, canvasChar: HTMLCanvasElement, sex: string, params: any) {
         if (params.hat) {
             let res = params.hat.split("_")
             let imgPath = ""
             switch(res[0]) {
                 case "bandana":
                     imgPath = imgExtention("head/" + res[0] + "s/" + sex + "/" + res[1])
-                    getImage(ctx, imgPath, char, canvasChar, sex, params, noop )
+                    getImage(ctx, imgPath, characterImage, canvasChar, sex, params, noop )
                 case "cap":
                     imgPath = imgExtention("head/" + res[0] + "s/" + sex + "/" + res[1] + "_cap_" + sex)
-                    getImage(ctx, imgPath, char, canvasChar, sex, params, noop )
+                    getImage(ctx, imgPath, characterImage, canvasChar, sex, params, noop )
                 case "chain":
                     imgPath = imgExtention("head/helms/" + sex + "/" + "chainhat_" + sex)
-                    getImage(ctx, imgPath, char, canvasChar, sex, params, noop )
+                    getImage(ctx, imgPath, characterImage, canvasChar, sex, params, noop )
                 case "hood":
                     imgPath = imgExtention("head/" + res[0] + "s/" + sex + "/" + res[1] + "_hood_" + sex)
-                    getImage(ctx, imgPath, char, canvasChar, sex, params, noop )
+                    getImage(ctx, imgPath, characterImage, canvasChar, sex, params, noop )
                 case "helmet":
                     imgPath = imgExtention("head/helms/" + sex + "/" + res[1] + "_helm_" + sex)
-                    getImage(ctx, imgPath, char, canvasChar, sex, params, noop )
+                    getImage(ctx, imgPath, characterImage, canvasChar, sex, params, noop )
                 case "tiara":
                     imgPath = imgExtention("head/tiaras_" + sex + "/" + res[1])
-                    getImage(ctx, imgPath, char, canvasChar, sex, params, noop )
+                    getImage(ctx, imgPath, characterImage, canvasChar, sex, params, noop )
                 default:
                     noop ()
             }
@@ -478,20 +476,20 @@ export module CharacterDrawer {
     function noop () {}
 
     // Called each time we want to draw a part of a character
-    function getImage(ctx: CanvasRenderingContext2D, imgRef: string, char: Character, canvasChar: HTMLCanvasElement, sex: string, params: any, callback: any) {
+    function getImage(ctx: CanvasRenderingContext2D, imgRef: string, characterImage: HTMLImageElement, canvasChar: HTMLCanvasElement, sex: string, params: any, callback: any) {
         var img = new Image();
         loadImage(spritesURL + imgRef, img)
             .then(img => {
                 drawImage(ctx, img)
-                char.image.src = canvasChar.toDataURL('image/png');
-                callback(ctx, char, canvasChar, sex, params)
+                characterImage.src = canvasChar.toDataURL('image/png');
+                callback(ctx, characterImage, canvasChar, sex, params)
             })
             .catch(error => {
                 console.error(error)
-                callback(ctx, char, canvasChar, sex, params)
+                callback(ctx, characterImage, canvasChar, sex, params)
             });
     }
-    
+
     // Load an image from the storage
     function loadImage(url: string, img: any): Promise<any> {
         return new Promise((resolve: any, reject: any) => {
@@ -502,7 +500,7 @@ export module CharacterDrawer {
             img.src = url;
         });
     }
-    
+
     // draw the image in the client's context
     function drawImage(ctx: CanvasRenderingContext2D, img: any) {
         try {
