@@ -1,4 +1,4 @@
-import { RPG } from "../rpg.js"
+import { RPG } from "../rpg"
 
 export module Communication {
     const keyOutMove = "s_MOVE"
@@ -30,12 +30,12 @@ export module Communication {
         RPG.handleOpen()
     }
 
-    // 
+    //
     // Listen to the WebSocket and handle messages received from the server
-    // 
+    //
     function message(e: MessageEvent): void {
         let strLines = e.data.split("\n")
-        for (let line of strLines) { 
+        for (let line of strLines) {
             let { key, value } = parseMessage(line)
             switch (key) {
                 case keyInLaunch:
@@ -73,9 +73,9 @@ export module Communication {
         throw new Error("error while parsing message from server")
     }
 
-    // 
+    //
     // Functions to send messages to the server
-    // 
+    //
     export function sendMoveMessage(movement: number): void {
         let message = JSON.stringify({
             Key: keyOutMove,

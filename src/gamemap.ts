@@ -1,5 +1,5 @@
-import { Config } from "./config/config.js"
-import { Tileset } from "./tileset.js"
+import { Config } from "./config/config"
+import { Tileset } from "./tileset"
 
 export class Gamemap {
     mapToDraw: any

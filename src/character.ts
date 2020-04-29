@@ -1,6 +1,6 @@
-import { Gamemap } from "./gamemap.js"
-import { Config } from "./config/config.js"
-import { CharacterDrawer } from "./characterDrawer.js"
+import { Gamemap } from "./gamemap"
+import { Config } from "./config/config"
+import { CharacterDrawer } from "./characterDrawer"
 
 let ANIMATION_LENGTH = 1
 let MOVEMENT_LENGTH = 10

@@ -1,7 +1,7 @@
-import { Config } from "./config/config.js"
-import { Character } from "./character.js"
-import { Gamemap } from "./gamemap.js"
-import { Communication } from "./communication/communication.js"
+import { Config } from "./config/config"
+import { Character } from "./character"
+import { Gamemap } from "./gamemap"
+import { Communication } from "./communication/communication"
 
 export module RPG {
 
@@ -14,9 +14,9 @@ export module RPG {
 
     let characters: Map<string, Character> = new Map()
 
-    // 
+    //
     // Management of the messages coming from the server
-    // 
+    //
     export function handleOpen(): void {
         $('#logs').append('Connection established!</br>')
     }
@@ -85,10 +85,10 @@ export module RPG {
         }
         return m
     }
-    
-    // 
+
+    //
     // Canvas and keyboard management
-    // 
+    //
     export function initGame (): void {
         $('#canvas').ready(() => {
             initCanvas()
@@ -105,13 +105,13 @@ export module RPG {
 
         canvas.width = Config.cWIdth
         canvas.height = Config.cHeight
-    
+
         let debug = document.getElementById('debug') as HTMLCanvasElement
         let ctxDebug = debug.getContext('2d')
         if (!debug || !ctxDebug) {
             throw new Error("error while getting debug canvas")
         }
-        
+
         setInterval(() => {
             map.drawMap(ctx!)
             drawCharacter(ctx!, joueur, map)
@@ -123,7 +123,7 @@ export module RPG {
             // Retrieve the key code
             let e = event || window.event
             let key = e.which || e.keyCode
-    
+
             // Handle keyboard inputs for player directions
             switch (key) {
                 // Up arrow, z, w, Z, W
@@ -174,9 +174,9 @@ export module RPG {
         }
     }
 
-    // 
+    //
     // Game global state management
-    // 
+    //
     function initPlayer(playerData: any): void {
         joueur = new Character(parseInt(playerData.x), parseInt(playerData.y), Config.DIRECTION.DOWN, playerData.name, playerData.GamemapID)
     }
@@ -200,7 +200,7 @@ export module RPG {
         let newChar = new Character(parseInt(character.x), parseInt(character.y), Config.DIRECTION.DOWN, character.name, character.GamemapID)
 
         newChar.generate(character.tileFormula)
-        
+
         characters.set(newChar.name, newChar)
     }
 }

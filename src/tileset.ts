@@ -1,4 +1,4 @@
-import { Config } from "./config/config.js"
+import { Config } from "./config/config"
 
 export class Tileset {
     image: any
@@ -13,7 +13,7 @@ export class Tileset {
             if(!this.complete) {
                 throw new Error("Erreur de chargement du tileset nommé \"" + url + "\".");
             }
-    
+
             // Largeur du tileset en tiles
             this.tilesetReference.largeur = this.width / Config.tileSize;
         }
