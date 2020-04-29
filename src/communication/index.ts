@@ -1,3 +1,3 @@
-import { Communication } from "./communication"
+import * as Communication from './communication'
 
 export { Communication }

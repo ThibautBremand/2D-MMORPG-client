@@ -1,3 +1,3 @@
-import { Config } from "./config"
+import * as Config from './config'
 
 export { Config }

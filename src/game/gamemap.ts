@@ -1,5 +1,5 @@
-import { Config } from "../config"
-import { Tileset } from "./tileset"
+import { Config } from '../config'
+import { Tileset } from './tileset'
 
 export class Gamemap {
     mapToDraw: any
@@ -27,9 +27,9 @@ export class Gamemap {
     // Load the layers from the json files given
     public loadLayers(): void {
         // Retrieve all the layers for the map
-        let layers = this.mapToDraw.layers
+        const layers = this.mapToDraw.layers
         // Retrieve tileset
-        let tilesets = this.mapToDraw.tilesets
+        const tilesets = this.mapToDraw.tilesets
         for (let i = 0; i < tilesets.length; ++i) {
             let image = tilesets[i].image
             image = image.substring(image.search('/tilesets/') + '/tilesets/'.length, image.length)
@@ -40,13 +40,13 @@ export class Gamemap {
             this.tilesets.push(new Tileset(image, tilesets[i].firstgid))
         }
 
-        for (let i = 0; i < layers.length; ++i) {
-            if (layers[i].name == 'Collisions') {
-                this.collisions = layers[i].objects
-            } else if (layers[i].name.substr(0, 3) == 'MAP') {
-                this.neighbors.push(layers[i])
+        for (const layer of layers) {
+            if (layer.name === 'Collisions') {
+                this.collisions = layer.objects
+            } else if (layer.name.substr(0, 3) === 'MAP') {
+                this.neighbors.push(layer)
             } else {
-                this.layers.push(layers[i].data)
+                this.layers.push(layer.data)
             }
         }
     }
@@ -60,11 +60,11 @@ export class Gamemap {
         this.translate(-this.camX, -this.camY, context)
 
         // Draw the layers
-        for (let currMap = 0; currMap < this.layers.length; ++currMap) {
+        for (const layer of this.layers) {
             let cpt = 0
             for (let j = 0; j < this.height; ++j) {
                 for (let i = 0; i < this.width; ++i) {
-                    let currentTile = this.layers[currMap][cpt]
+                    const currentTile = layer[cpt]
                     if (currentTile > 0) {
                         this.electAndDrawTile(currentTile, context, i, j)
                     }
@@ -98,10 +98,10 @@ export class Gamemap {
                 return
             }
         }
-        if (Config.tileSize == 16) {
+        if (Config.tileSize === 16) {
             tilesetToUse = this.tilesets[this.tilesets.length - 1]
             tilesetToUse.drawTitle(currentTile - tilesetToUse.firstgid + this.tilesets.length, context, i * Config.tileSize, j * Config.tileSize)
-        } else if (Config.tileSize == 32) {
+        } else if (Config.tileSize === 32) {
             tilesetToUse = this.tilesets[this.tilesets.length - 1]
             tilesetToUse.drawTitle(currentTile - tilesetToUse.firstgid + this.tilesets.length - 1, context, i * Config.tileSize, j * Config.tileSize)
         }
@@ -110,14 +110,14 @@ export class Gamemap {
     // Detect if a position is an obstacle
     public isObstacle(positionToCheck: any): boolean {
         if (this.collisions.length > 0) {
-            for (let i = 0; i < this.collisions.length; ++i) {
-                let collWidth = this.collisions[i].width
-                let collHeight = this.collisions[i].height
-                let collX = this.collisions[i].x
-                let collY = this.collisions[i].y
+            for (const collision of this.collisions) {
+                const collWidth = collision.width
+                const collHeight = collision.height
+                const collX = collision.x
+                const collY = collision.y
 
-                let checkX = (positionToCheck.x * Config.tileSize) + Config.tileSize
-                let checkY = (positionToCheck.y * Config.tileSize) + Config.tileSize
+                const checkX = (positionToCheck.x * Config.tileSize) + Config.tileSize
+                const checkY = (positionToCheck.y * Config.tileSize) + Config.tileSize
 
                 // Compares the positionToCheck with the collision area
                 if (checkX > collX && checkX < collX + collWidth && checkY > collY && checkY < collY + collHeight) {
@@ -129,33 +129,33 @@ export class Gamemap {
     }
 
     public isNeighbor(direction: number, nextPos: { x: number, y: number }): string | undefined {
-        for (let j = 0; j < this.neighbors.length; ++j) {
-            if (this.neighbors[j].objects.length > 0) {
-                for (let i = 0; i < this.neighbors[j].objects.length; ++i) {
-                    let collWidth = this.neighbors[j].objects[i].width
-                    let collHeight = this.neighbors[j].objects[i].height
-                    let collX = this.neighbors[j].objects[i].x
-                    let collY = this.neighbors[j].objects[i].y
+        for (const neighbor of this.neighbors) {
+            if (neighbor.objects.length > 0) {
+                for (const object of neighbor.objects) {
+                    const collWidth = object.width
+                    const collHeight = object.height
+                    const collX = object.x
+                    const collY = object.y
 
-                    let checkX = (nextPos.x * Config.tileSize) + Config.tileSize
-                    let checkY = (nextPos.y * Config.tileSize) + Config.tileSize
+                    const checkX = (nextPos.x * Config.tileSize) + Config.tileSize
+                    const checkY = (nextPos.y * Config.tileSize) + Config.tileSize
 
-                    // Compares the joueur's with the TP area
-                    if (direction == Config.DIRECTION.UP) {
+                    // Compares the player with the TP area
+                    if (direction === Config.DIRECTION.UP) {
                         if (checkX > collX && checkX < collX + collWidth && checkY >= collY && checkY < collY + collHeight) {
-                            return (this.neighbors[j].name.substr(3, this.neighbors[j].name.length))
+                            return (neighbor.name.substr(3, neighbor.name.length))
                         }
-                    } else if (direction == Config.DIRECTION.DOWN) {
-                        if (checkX > collX && checkX < collX + collWidth && checkY - collHeight == collY + collHeight) {
-                            return (this.neighbors[j].name.substr(3, this.neighbors[j].name.length))
+                    } else if (direction === Config.DIRECTION.DOWN) {
+                        if (checkX > collX && checkX < collX + collWidth && checkY - collHeight === collY + collHeight) {
+                            return (neighbor.name.substr(3, neighbor.name.length))
                         }
-                    } else if (direction == Config.DIRECTION.LEFT) {
-                        if (checkX == collX && checkX < collX + collWidth && checkY >= collY && checkY < collY + collHeight) {
-                            return (this.neighbors[j].name.substr(3, this.neighbors[j].name.length))
+                    } else if (direction === Config.DIRECTION.LEFT) {
+                        if (checkX === collX && checkX < collX + collWidth && checkY >= collY && checkY < collY + collHeight) {
+                            return (neighbor.name.substr(3, neighbor.name.length))
                         }
-                    } else if (direction == Config.DIRECTION.RIGHT) {
-                        if (checkX - collWidth == collX + collWidth && checkY >= collY && checkY < collY + collHeight) {
-                            return (this.neighbors[j].name.substr(3, this.neighbors[j].name.length))
+                    } else if (direction === Config.DIRECTION.RIGHT) {
+                        if (checkX - collWidth === collX + collWidth && checkY >= collY && checkY < collY + collHeight) {
+                            return (neighbor.name.substr(3, neighbor.name.length))
                         }
                     }
                 }

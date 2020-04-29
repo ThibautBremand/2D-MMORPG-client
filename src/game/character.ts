@@ -1,12 +1,12 @@
-import { Config } from "../config"
-import { Gamemap } from "./gamemap"
-import { CharacterDrawer } from "./characterDrawer"
+import { Config } from '../config'
+import { Gamemap } from './gamemap'
+import * as CharacterDrawer from './characterDrawer'
 
-let ANIMATION_LENGTH = 1
-let MOVEMENT_LENGTH = 10
-let TILESET_WIDTH = 13
-let TILESET_HEIGHT = 21
-let ROW_MOVEMENT = 8
+const ANIMATION_LENGTH = 1
+const MOVEMENT_LENGTH = 10
+const TILESET_WIDTH = 13
+const TILESET_HEIGHT = 21
+const ROW_MOVEMENT = 8
 
 export class Character {
     x: number
@@ -27,50 +27,51 @@ export class Character {
         this.image = new Image()
     }
 
-    public drawCharacter(context: CanvasRenderingContext2D, joueur: Character, map: Gamemap): void {
+    public drawCharacter(context: CanvasRenderingContext2D, player: Character, map: Gamemap): void {
         // Image's number to take for the animation
         let frame = 0
 
         // Offset to apply to the entity's position
-        let offsetX = 0, offsetY = 0
+        let offsetX = 0
+        let offsetY = 0
 
-        if(this.stateAnimation >= MOVEMENT_LENGTH) {
+        if (this.stateAnimation >= MOVEMENT_LENGTH) {
             // Abort the movement if the timer is done
             this.stateAnimation = -1
 
             // Initialize the map translation when the main entity is drawn
-            if(this === joueur) {
-                map.camX = map.clamp(-(-(joueur.x * Config.tileSize) + Config.cWIdth/2), 0, map.width * Config.tileSize - Config.cWIdth)
-                map.camY = map.clamp(-(-(joueur.y * Config.tileSize) + Config.cHeight/2), 0, map.height * Config.tileSize - Config.cHeight)
+            if (this === player) {
+                map.camX = map.clamp(-(-(player.x * Config.tileSize) + Config.cWIdth/2), 0, map.width * Config.tileSize - Config.cWIdth)
+                map.camY = map.clamp(-(-(player.y * Config.tileSize) + Config.cHeight/2), 0, map.height * Config.tileSize - Config.cHeight)
             }
-        } else if(this.stateAnimation >= 0) {
+        } else if (this.stateAnimation >= 0) {
             // Determine the image (frame) to display for the animation
             frame = Math.floor(this.stateAnimation / ANIMATION_LENGTH)
-            if(frame > 8) { //3
-                frame %= 9 //4
+            if (frame > 8) {     // 3
+                frame %= 9      // 4
             }
 
             // Pixels count left to proceed
-            let pixelsAParcourir = 32 - (32 * (this.stateAnimation / MOVEMENT_LENGTH))
+            const pixelsAParcourir = 32 - (32 * (this.stateAnimation / MOVEMENT_LENGTH))
 
             // From this number, decide the offset for x & y
-            if (this.direction == Config.DIRECTION.UP) {
+            if (this.direction === Config.DIRECTION.UP) {
                 offsetY = pixelsAParcourir
-            } else if (this.direction == Config.DIRECTION.DOWN) {
+            } else if (this.direction === Config.DIRECTION.DOWN) {
                 offsetY = -pixelsAParcourir
-            } else if (this.direction == Config.DIRECTION.LEFT) {
+            } else if (this.direction === Config.DIRECTION.LEFT) {
                 offsetX = pixelsAParcourir
-            } else if (this.direction == Config.DIRECTION.RIGHT) {
+            } else if (this.direction === Config.DIRECTION.RIGHT) {
                 offsetX = -pixelsAParcourir
             }
 
             // One more frame
             this.stateAnimation++
 
-            let tempocamX = map.clamp(-(-(joueur.x * Config.tileSize) + Config.cWIdth/2), 0, map.width * Config.tileSize - Config.cWIdth)
-            let tempocamY = map.clamp(-(-(joueur.y * Config.tileSize) + Config.cHeight/2), 0, map.height * Config.tileSize - Config.cHeight)
+            const tempocamX = map.clamp(-(-(player.x * Config.tileSize) + Config.cWIdth/2), 0, map.width * Config.tileSize - Config.cWIdth)
+            const tempocamY = map.clamp(-(-(player.y * Config.tileSize) + Config.cHeight/2), 0, map.height * Config.tileSize - Config.cHeight)
 
-            if (tempocamX != map.camX || tempocamY != map.camY) {
+            if (tempocamX !== map.camX || tempocamY !== map.camY) {
                 map.camX = tempocamX + Math.round(offsetX)
                 map.camY = tempocamY + Math.round(offsetY)
             }
@@ -103,7 +104,7 @@ export class Character {
 
         // Change the character's current direction
         this.direction = direction
-        let nextPos = this.nextPosition(direction)
+        const nextPos = this.nextPosition(direction)
 
         // Check if the next position is in the map
         if (nextPos.x < 0 || nextPos.y < 0 || nextPos.x >= map.width || nextPos.y >= map.height) {
@@ -126,18 +127,18 @@ export class Character {
     }
 
     public nextPosition(direction: number):  {'x' : number, 'y' : number} {
-        let coord = {'x' : this.x, 'y' : this.y}
-        if (direction == Config.DIRECTION.DOWN) {
-            coord.y++
+        const coord = {'x' : this.x, 'y' : this.y}
+        if (direction === Config.DIRECTION.DOWN) {
+            coord.y ++
         }
-        else if (direction == Config.DIRECTION.LEFT) {
-            coord.x--
+        else if (direction === Config.DIRECTION.LEFT) {
+            coord.x --
         }
-        else if (direction == Config.DIRECTION.RIGHT) {
-            coord.x++
+        else if (direction === Config.DIRECTION.RIGHT) {
+            coord.x ++
         }
-        else if (direction == Config.DIRECTION.UP) {
-            coord.y--
+        else if (direction === Config.DIRECTION.UP) {
+            coord.y --
         }
         return coord
     }
