@@ -1,11 +1,10 @@
-let params: any
-let spritesURL = "front/sprites/Universal-LPC-Spritesheet-Character-Generator/Universal-LPC-spritesheet/"
+import { Config } from "./config/config.js";
 
 export module CharacterDrawer {
     export function generate(characterImage: HTMLImageElement, json: any): void {
-        let newCanvas = document.createElement("canvas");
-        params = JSON.parse(json);
-        redraw(characterImage, newCanvas, params);
+        let newCanvas = document.createElement("canvas")
+        let params = JSON.parse(json)
+        redraw(characterImage, newCanvas, params)
     }
 
     // Called each time we redraw the canvas
@@ -44,13 +43,13 @@ export module CharacterDrawer {
     }
 
     function drawBody(ctx: CanvasRenderingContext2D, characterImage: HTMLImageElement, canvasChar: HTMLCanvasElement, sex: string, params: any) {
-        let skinColor = checkParam((e: { body: any }) => {return e.body})
+        let skinColor = checkBody(params)
         let imgPath = imgExtention("body/" + sex + "/" + skinColor)
         getImage(ctx, imgPath, characterImage, canvasChar, sex, params, drawEars)
     }
 
     function drawEars(ctx: CanvasRenderingContext2D, characterImage: HTMLImageElement, canvasChar: HTMLCanvasElement, sex: string, params: any) {
-        let skinColor = checkParam((e: { body: any }) => {return e.body})
+        let skinColor = checkBody(params)
         if (params.ears) {
             let res = params.ears.split("_")
             let imgPath = imgExtention("body/" + sex + "/ears/" + res[0] + "ears_" + skinColor)
@@ -70,7 +69,7 @@ export module CharacterDrawer {
     }
 
     function drawNose(ctx: CanvasRenderingContext2D, characterImage: HTMLImageElement, canvasChar: HTMLCanvasElement, sex: string, params: any) {
-        let skinColor = checkParam((e: { body: any }) => {return e.body})
+        let skinColor = checkBody(params)
         if (params.nose) {
             let res = params.nose.split("_")
             let imgPath = imgExtention("body/" + sex + "/nose/" + res[0] + "nose_" + skinColor)
@@ -466,11 +465,11 @@ export module CharacterDrawer {
         }
     }
 
-    function checkParam(f: any) {
-        if (!f(params)) {
+    function checkBody(params: any): string {
+        if (!(params.body)) {
             return "light"
         }
-        return f(params)
+        return params.body as string
     }
 
     function noop () {}
@@ -478,7 +477,7 @@ export module CharacterDrawer {
     // Called each time we want to draw a part of a character
     function getImage(ctx: CanvasRenderingContext2D, imgRef: string, characterImage: HTMLImageElement, canvasChar: HTMLCanvasElement, sex: string, params: any, callback: any) {
         var img = new Image();
-        loadImage(spritesURL + imgRef, img)
+        loadImage(Config.spritesURL + imgRef, img)
             .then(img => {
                 drawImage(ctx, img)
                 characterImage.src = canvasChar.toDataURL('image/png');
