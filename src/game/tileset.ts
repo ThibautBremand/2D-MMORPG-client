@@ -1,4 +1,4 @@
-import { Config } from "../config/config"
+import { Config } from "../config"
 
 export class Tileset {
     image: any

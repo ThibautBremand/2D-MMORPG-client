@@ -1,7 +1,7 @@
-import { Config } from "../config/config"
-import { Character } from "../game/character"
-import { Gamemap } from "../game/gamemap"
-import { Communication } from "../communication/communication"
+import { Config } from "../config"
+import { Communication } from "../communication"
+import { Character } from "../game"
+import { Gamemap } from "../game"
 
 export module RPG {
 

@@ -1,5 +1,5 @@
+import { Config } from "../config"
 import { Gamemap } from "./gamemap"
-import { Config } from "../config/config"
 import { CharacterDrawer } from "./characterDrawer"
 
 let ANIMATION_LENGTH = 1

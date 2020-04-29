@@ -1,4 +1,4 @@
-import { Communication } from "./src/communication/communication"
+import { Communication } from "./src/communication"
 
 let username = prompt('Enter your name', '')
 if (!username) {

@@ -1,4 +1,4 @@
-import { RPG } from "../controller/rpg"
+import { RPG } from "../controller"
 
 export module Communication {
     const keyOutMove = "s_MOVE"
