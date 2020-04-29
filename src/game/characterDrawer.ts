@@ -318,7 +318,7 @@ export module CharacterDrawer {
 
     function drawFormal(ctx: CanvasRenderingContext2D, characterImage: HTMLImageElement, canvasChar: HTMLCanvasElement, sex: string, params: any) {
         if (params.formal) {
-            let res = params.legs.split("_");
+            let res = params.legs.split("_")
             let imgPath = imgExtention("formal_" + sex + "_no_th-sh/" + res[0])
             getImage(ctx, imgPath, characterImage, canvasChar, sex, params, drawBracelet)
         } else {
@@ -461,7 +461,7 @@ export module CharacterDrawer {
                     noop ()
             }
         } else {
-            noop ();
+            noop ()
         }
     }
 
@@ -476,36 +476,36 @@ export module CharacterDrawer {
 
     // Called each time we want to draw a part of a character
     function getImage(ctx: CanvasRenderingContext2D, imgRef: string, characterImage: HTMLImageElement, canvasChar: HTMLCanvasElement, sex: string, params: any, callback: any) {
-        var img = new Image();
+        var img = new Image()
         loadImage(Config.spritesURL + imgRef, img)
             .then(img => {
                 drawImage(ctx, img)
-                characterImage.src = canvasChar.toDataURL('image/png');
+                characterImage.src = canvasChar.toDataURL('image/png')
                 callback(ctx, characterImage, canvasChar, sex, params)
             })
             .catch(error => {
                 console.error(error)
                 callback(ctx, characterImage, canvasChar, sex, params)
-            });
+            })
     }
 
     // Load an image from the storage
     function loadImage(url: string, img: any): Promise<any> {
         return new Promise((resolve: any, reject: any) => {
-            img.addEventListener('load', () => resolve(img));
+            img.addEventListener('load', () => resolve(img))
             img.addEventListener('error', () => {
-                reject(new Error(`Failed to load image's URL: ${url}`));
-            });
-            img.src = url;
-        });
+                reject(new Error(`Failed to load image's URL: ${url}`))
+            })
+            img.src = url
+        })
     }
 
     // draw the image in the client's context
     function drawImage(ctx: CanvasRenderingContext2D, img: any) {
         try {
-            ctx.drawImage(img, 0, 0);
+            ctx.drawImage(img, 0, 0)
         } catch(err) {
-            console.error("Error: could not find " + img.src);
+            console.error("Error: could not find " + img.src)
         }
     }
 }

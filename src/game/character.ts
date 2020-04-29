@@ -36,43 +36,43 @@ export class Character {
 
         if(this.stateAnimation >= MOVEMENT_LENGTH) {
             // Abort the movement if the timer is done
-            this.stateAnimation = -1;
+            this.stateAnimation = -1
 
             // Initialize the map translation when the main entity is drawn
             if(this === joueur) {
-                map.camX = map.clamp(-(-(joueur.x * Config.tileSize) + Config.cWIdth/2), 0, map.width * Config.tileSize - Config.cWIdth);
-                map.camY = map.clamp(-(-(joueur.y * Config.tileSize) + Config.cHeight/2), 0, map.height * Config.tileSize - Config.cHeight);
+                map.camX = map.clamp(-(-(joueur.x * Config.tileSize) + Config.cWIdth/2), 0, map.width * Config.tileSize - Config.cWIdth)
+                map.camY = map.clamp(-(-(joueur.y * Config.tileSize) + Config.cHeight/2), 0, map.height * Config.tileSize - Config.cHeight)
             }
         } else if(this.stateAnimation >= 0) {
             // Determine the image (frame) to display for the animation
-            frame = Math.floor(this.stateAnimation / ANIMATION_LENGTH);
+            frame = Math.floor(this.stateAnimation / ANIMATION_LENGTH)
             if(frame > 8) { //3
-                frame %= 9; //4
+                frame %= 9 //4
             }
 
             // Pixels count left to proceed
-            let pixelsAParcourir = 32 - (32 * (this.stateAnimation / MOVEMENT_LENGTH));
+            let pixelsAParcourir = 32 - (32 * (this.stateAnimation / MOVEMENT_LENGTH))
 
             // From this number, decide the offset for x & y
             if (this.direction == Config.DIRECTION.UP) {
-                offsetY = pixelsAParcourir;
+                offsetY = pixelsAParcourir
             } else if (this.direction == Config.DIRECTION.DOWN) {
-                offsetY = -pixelsAParcourir;
+                offsetY = -pixelsAParcourir
             } else if (this.direction == Config.DIRECTION.LEFT) {
-                offsetX = pixelsAParcourir;
+                offsetX = pixelsAParcourir
             } else if (this.direction == Config.DIRECTION.RIGHT) {
-                offsetX = -pixelsAParcourir;
+                offsetX = -pixelsAParcourir
             }
 
             // One more frame
-            this.stateAnimation++;
+            this.stateAnimation++
 
-            let tempocamX = map.clamp(-(-(joueur.x * Config.tileSize) + Config.cWIdth/2), 0, map.width * Config.tileSize - Config.cWIdth);
-            let tempocamY = map.clamp(-(-(joueur.y * Config.tileSize) + Config.cHeight/2), 0, map.height * Config.tileSize - Config.cHeight);
+            let tempocamX = map.clamp(-(-(joueur.x * Config.tileSize) + Config.cWIdth/2), 0, map.width * Config.tileSize - Config.cWIdth)
+            let tempocamY = map.clamp(-(-(joueur.y * Config.tileSize) + Config.cHeight/2), 0, map.height * Config.tileSize - Config.cHeight)
 
             if (tempocamX != map.camX || tempocamY != map.camY) {
-                map.camX = tempocamX + Math.round(offsetX);
-                map.camY = tempocamY + Math.round(offsetY);
+                map.camX = tempocamX + Math.round(offsetX)
+                map.camY = tempocamY + Math.round(offsetY)
             }
         }
 
