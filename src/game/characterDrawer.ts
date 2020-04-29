@@ -1,4 +1,4 @@
-import { Config } from "./config/config"
+import { Config } from "../config/config"
 
 export module CharacterDrawer {
     export function generate(characterImage: HTMLImageElement, json: any): void {
