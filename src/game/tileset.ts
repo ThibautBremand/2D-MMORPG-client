@@ -11,13 +11,13 @@ export class Tileset {
         this.image.tilesetReference = this
         this.image.onload = function() {
             if (!this.complete) {
-                throw new Error('Error while loading the following tileset: ' + url)
+                throw new Error(`Error while loading the following tileset: ${ url }`)
             }
 
             // Largeur du tileset en tiles
             this.tilesetReference.largeur = this.width / Config.tileSize
         }
-        this.image.src = 'front/tilesets/' + url
+        this.image.src = `${ Config.tilesetURL }${ url }`
     }
 
     // Draw the title number 'nb' in the 2D Context 'context' with the coordinates below

@@ -8,13 +8,22 @@ This client displays the game as canvas in the user's browser, it handles user's
 ## Local installation
 
 - Clone the repo
-- Run ***npm run build*** in order to generate a bundled ***app.js*** JavaScript file, into the ***dist*** directory
-- Deploy this app.js file alongside the server as detailed in the server's Readme file.
+- Create a *.env* environment variables file using the *.env.sample* as a model. Don't use any separator.
+  - **Note:** DEPLOY_PATH value **must correspond** to the **client directory of the server**, otherwise the server won't be able to find the client
+  - For example: DEPLOY_PATH=[ ... ] 2D-MMORPG-server/client
+- Run *npm i* to install all the dependencies
+- Run *npm run build* in order to generate a bundled *app.js* JavaScript file, into the *dist* directory
+- Run *npm run deploy* to deploy the client into the server's client repository.
+
+To add new tilesets, you need to directly copy the image files into the *dist/tilesets* directory.
+
+## Create a new map and a new character
+Will be detailed later
 
 ## Troubleshooting
 
 Make sure you have the following elements installed on your system:
-- node.js
+- Node.js
 - npm
 - TypeScript
 - webpack
@@ -22,4 +31,5 @@ Make sure you have the following elements installed on your system:
 ## 2k20 Reborn!
 This project is a new version of this one made in pure JS, in 2015:
 https://github.com/ThibautBremand/WebApp_WebMMORPG-Client
+
 The previous project is now deprecated.
