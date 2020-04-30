@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>2D MMORPG</title>
+    <!-- jQuery -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
+
+    <!-- Game client -->
+    <script type="module" src="./client/app.js"></script>
+
+    <!--LPC char generator-->
+    <script type="text/javascript" src="http://cdnjs.cloudflare.com/ajax/libs/underscore.js/1.5.2/underscore-min.js"></script>
+    <script type="text/javascript" src="http://cdnjs.cloudflare.com/ajax/libs/underscore.string/2.3.3/underscore.string.min.js"></script>
+    <script type="text/javascript" src="./client/canvas2image.js"></script>
+    <script type="text/javascript" src="./client/base64.js"></script>
+</head>
+<body>
+    <canvas id="canvas"></canvas>
+    <br>
+    <canvas id="debug" width="800" height="640" style="display:none"></canvas>
+
+    <div id="logs"></div>
+    <div id="log"></div>
+    <form id="form">
+        <input type="submit" value="Send" />
+        <input type="text" id="msg" size="64" autofocus />
+    </form>
+</body>
+</html>
