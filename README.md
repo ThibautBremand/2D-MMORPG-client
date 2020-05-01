@@ -8,14 +8,14 @@ This client displays the game as canvas in the user's browser, it handles user's
 ## Local installation
 
 - Clone the repo
+- Run *git submodule update --init --recursive* in order to clone the submodules.
 - Create a *.env* environment variables file using the *.env.sample* as a model. Don't use any separator.
-  - **Note:** DEPLOY_PATH value **must correspond** to the **client directory of the server**, otherwise the server won't be able to find the client
-  - For example: DEPLOY_PATH=[ ... ] 2D-MMORPG-server/client
+  - **Note:** DEPLOY_PATH value must correspond to the CLIENT_PATH value of the server. That way, once you deploy the client, it'll be directly served by the server to the users (cf. https://github.com/ThibautBremand/2D-MMORPG-server).
 - Run *npm i* to install all the dependencies
 - Run *npm run build* in order to generate a bundled *app.js* JavaScript file, into the *dist* directory
-- Run *npm run deploy* to deploy the client into the server's client repository.
+- Run *npm run deploy* to deploy the client into DEPLOY_PATH directory.
 
-To add new tilesets, you need to directly copy the image files into the *dist/tilesets* directory.
+To add new tilesets, you need to directly copy the image files into the *dist/tilesets* directory. They'll be deployed automatically using *npm run deploy*.
 
 ## Create a new map and a new character
 Will be detailed later
@@ -27,6 +27,8 @@ Make sure you have the following elements installed on your system:
 - npm
 - TypeScript
 - webpack
+
+Also make sure you have correctly filled your .env file.
 
 ## 2k20 Reborn!
 This project is a new version of this one made in pure JS, in 2015:
