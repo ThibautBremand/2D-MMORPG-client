@@ -17,8 +17,8 @@ export let conn: WebSocket
 export let name: string
 
 export function init(username: string): void {
-    name = username
-    conn = new WebSocket('ws://' + document.location.host + '/ws?name=' + name)
+    name = username.toLowerCase()
+    conn = new WebSocket('ws://' + document.location.host + '/ws?name=' + name.toLowerCase())
     conn.onopen = open
     conn.onmessage = (e) => {
         message(e)
