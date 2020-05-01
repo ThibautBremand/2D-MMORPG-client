@@ -8,6 +8,7 @@ This client displays the game as canvas in the user's browser, it handles user's
 ## Local installation
 
 - Clone the repo
+- Run *git submodule update --init --recursive* in order to clone the submodules.
 - Create a *.env* environment variables file using the *.env.sample* as a model. Don't use any separator.
   - **Note:** DEPLOY_PATH value must correspond to the CLIENT_PATH value of the server. That way, once you deploy the client, it'll be directly served by the server to the users (cf. https://github.com/ThibautBremand/2D-MMORPG-server).
 - Run *npm i* to install all the dependencies
