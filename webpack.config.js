@@ -1,4 +1,5 @@
 const path = require('path');
+const JavaScriptObfuscator = require('webpack-obfuscator');
 
 module.exports = {
     entry: path.join(__dirname, '/app.ts'),
@@ -18,4 +19,9 @@ module.exports = {
     resolve: {
         extensions: [".tsx", ".ts", ".js"]
     },
+    plugins: [
+        new JavaScriptObfuscator({
+            rotateUnicodeArray: true
+        })
+    ]
 };
