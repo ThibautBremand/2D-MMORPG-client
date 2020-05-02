@@ -18,13 +18,15 @@ This client displays the game as canvas in the user's browser, it handles user's
 To add new tilesets, you need to directly copy the image files into the *dist/tilesets* directory. They'll be deployed automatically using *npm run deploy*.
 
 ## Create a new map and a new character
-Will be detailed later
+Please refer to this [Wiki page](https://github.com/ThibautBremand/2D-MMORPG-client/wiki/Create-new-maps).
 
 ## Troubleshooting
 
 Make sure you have the following elements installed on your system:
 - Node.js
 - npm
+
+Also, the following elements are mandatory but should be installed with npm i:
 - TypeScript
 - webpack
 
