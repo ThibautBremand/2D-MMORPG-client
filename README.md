@@ -5,6 +5,13 @@ For the server, please see https://github.com/ThibautBremand/2D-MMORPG-server
 
 This client displays the game as canvas in the user's browser, it handles user's inputs from the keyboard, and it interacts with the server in order to communicate with the other users.
 
+## Demo!  
+Go to http://51.91.158.243:8080/ and start playing using these usernames:
+- demo
+- demo2
+
+You can also create new characters using the following page: http://51.91.158.243:8080/character
+
 ## Local installation
 
 - Clone the repo
