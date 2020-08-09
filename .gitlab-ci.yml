@@ -1,0 +1,20 @@
+stages:
+  - "test"
+
+test:
+  stage: "test"
+  image: "debian:buster"
+
+  before_script:
+    - |
+      apt-get update -qq && \
+      apt-get install -y -qq git && \
+      apt-get install -y -qq npm && \
+      npm install --global webpack && \
+      npm install --global webpack-cli && \
+      npm install --save-dev webpack-obfuscator
+
+  script:
+    - git clone https://gitlab-ci-token:${CI_JOB_TOKEN}@gitlab.com/thibautbremand/2D-MMORPG-client.git
+    - cd 2D-MMORPG-client
+    - npm run build
